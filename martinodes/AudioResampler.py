@@ -9,8 +9,8 @@ class AudioResampler:
         return {
             "required": {
                 "audio": ("AUDIO", {}),
-                "samplerate" : ("INT", { "default" : 24000 }),
-                "channels" : ("INT", { "default" : 1 })
+                "samplerate" : ("INT", { "default" : 44100, "min": 8000, "max": 96000 }),
+                "channels" : ("INT", { "default" : 1, "min": 1, "max": 2 })
             },
         }
 
