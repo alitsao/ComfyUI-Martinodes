@@ -40,6 +40,12 @@ Retrieves information about the audio, passing the audio through for convenience
   - `samplerate`: Sample rate in Hz.
   - `channels`: Number of audio channels.
 
+### Audio batch loader (AudioBatchLoader)
+Loads audio files directly from a folder in ascending filename order. The folder may be an absolute path or a path relative to ComfyUI's input directory. Subfolders are not scanned.
+
+- **Inputs**: `input_path`: Folder containing audio files.
+- **Outputs**: A list of `AUDIO` values, one for each file.
+
 ### Resample audio (AudioResampler)
 Resamples audio to the target samplerate and channels. Useful when concatenating audios from different sources.
 

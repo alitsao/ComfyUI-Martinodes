@@ -5,8 +5,6 @@ import torch.nn.functional as F
 
 
 class LatentAVMaskedExtender:
-    def __init__(self):
-        pass
 
     @classmethod
     def INPUT_TYPES(s):
@@ -322,6 +320,7 @@ class LatentAVMaskedExtender:
         out_av["noise_mask"] = pack_samples(new_v, masks_out)
                 
         return (out_av, )
+
 
     @staticmethod
     def single_modality(tensor):

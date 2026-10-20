@@ -4,8 +4,6 @@ from .shared import MINIMAX_H3_PARAMS
 from .latentops import unpack_samples
 
 class MinimaxH3KeyframeConditioningInjector:
-    def __init__(self):
-        pass
 
     @classmethod
     def INPUT_TYPES(s):

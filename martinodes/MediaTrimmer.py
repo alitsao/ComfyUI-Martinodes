@@ -2,8 +2,6 @@ from .shared import CATEGORY
 import torch
 
 class MediaTrimmer:
-    def __init__(self):
-        pass
 
     @classmethod
     def INPUT_TYPES(s):

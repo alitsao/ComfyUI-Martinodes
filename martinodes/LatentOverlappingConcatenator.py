@@ -66,29 +66,18 @@ class LatentFolderOverlappingConcatenator:
 
     @classmethod
     def IS_CHANGED(s, folder_path, **kwargs):
-        folder = s._resolve_folder(folder_path)
+        folder = s.resolve_folder(folder_path)
         if not os.path.isdir(folder):
             return ""
         return str([(f, os.path.getmtime(os.path.join(folder, f))) for f in s._list_files(folder)])
 
-    @staticmethod
-    def _resolve_folder(folder_path):
-        folder_path = folder_path.strip()
-        if os.path.isabs(folder_path):
-            return folder_path
-        return os.path.join(folder_paths.get_output_directory(), folder_path)
-
-    @staticmethod
-    def _list_files(folder):
-        return sorted(f for f in os.listdir(folder) if f.lower().endswith(".avlatent") and os.path.isfile(os.path.join(folder, f)))
-
 
     def run(self, folder_path, video_fps, overlap_duration_seconds, video_overlap_resolve, audio_overlap_resolve):
-        folder = self._resolve_folder(folder_path)
+        folder = self.resolve_folder(folder_path)
         if not os.path.isdir(folder):
             raise FileNotFoundError(f"LatentFolderOverlappingConcatenator: Folder not found: '{folder}'")
 
-        files = self._list_files(folder)
+        files = self.list_files(folder)
         if not files:
             raise FileNotFoundError(f"LatentFolderOverlappingConcatenator: No .avlatent files in '{folder}'")
 
@@ -104,6 +93,20 @@ class LatentFolderOverlappingConcatenator:
             out_av = concat_av_latents(video_fps, overlap_duration_seconds, video_resolve, audio_resolve, av_latent_1=out_av, av_latent_2=av_latent)
 
         return (out_av, )
+
+
+    @staticmethod
+    def resolve_folder(folder_path):
+        folder_path = folder_path.strip()
+        if os.path.isabs(folder_path):
+            return folder_path
+        return os.path.join(folder_paths.get_output_directory(), folder_path)
+
+
+    @staticmethod
+    def list_files(folder):
+        return sorted(f for f in os.listdir(folder) if f.lower().endswith(".avlatent") and os.path.isfile(os.path.join(folder, f)))
+
 
 
 def concat_av_latents(video_fps, overlap_duration_seconds, video_overlap_resolve, audio_overlap_resolve, av_latent_1=None, av_latent_2=None):

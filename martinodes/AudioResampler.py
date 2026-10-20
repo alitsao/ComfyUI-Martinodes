@@ -1,8 +1,6 @@
 from .shared import CATEGORY, resample_audio
 
 class AudioResampler:
-    def __init__(self):
-        pass
 
     @classmethod
     def INPUT_TYPES(s):

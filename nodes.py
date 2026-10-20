@@ -2,6 +2,7 @@ from .martinodes.MediaSlicer import MediaSlicer
 from .martinodes.AudioResampler import AudioResampler
 from .martinodes.AudioTrimExtender import AudioTrimExtender
 from .martinodes.AudioInfo import AudioInfo
+from .martinodes.AudioBatchLoader import AudioBatchLoader
 from .martinodes.AudioSilenceSplitter import AudioSilenceSplitter
 from .martinodes.LatentAVInfo import LatentAVInfo
 from .martinodes.MediaTrimmer import MediaTrimmer
@@ -22,6 +23,7 @@ NODE_CLASS_MAPPINGS = {
     "MARAudioTrimExtender": AudioTrimExtender,
     "MARMediaTrimmer": MediaTrimmer,
     "MARAudioInfo": AudioInfo,
+    "MARAudioBatchLoader": AudioBatchLoader,
     "MARAudioSilenceSplitter": AudioSilenceSplitter,
     "MARMediaOverlappingConcatenator": MediaOverlappingConcatenator,
     "MARLatentAVMaskedExtender": LatentAVMaskedExtender,
@@ -42,6 +44,7 @@ NODE_CLASS_MAPPINGS = {
 NODE_DISPLAY_NAME_MAPPINGS = {
     "MARMediaSlicer": "Media head or tail",
     "MARAudioInfo": "Audio info",
+    "MARAudioBatchLoader": "Audio batch loader",
     "MARAudioSilenceSplitter": "Split audio at silences",
     "MARAudioResampler": "Resample audio",
     "MARMediaTrimmer": "Trim media",

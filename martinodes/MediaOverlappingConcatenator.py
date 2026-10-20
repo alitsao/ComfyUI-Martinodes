@@ -2,8 +2,6 @@ from .shared import CATEGORY, resample_audio
 import torch
 
 class MediaOverlappingConcatenator:
-    def __init__(self):
-        pass
 
     @classmethod
     def INPUT_TYPES(s):

@@ -3,8 +3,6 @@ from .shared import CATEGORY
 
 
 class LatentAVCombiner:
-    def __init__(self):
-        pass
 
     @classmethod
     def INPUT_TYPES(s):

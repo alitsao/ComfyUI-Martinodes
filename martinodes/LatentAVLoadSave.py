@@ -7,6 +7,7 @@ from .latentops import unpack_samples
 from .shared import CATEGORY
 
 class NoneLatent:
+
     @classmethod
     def INPUT_TYPES(s):
         return {"required": {}}
@@ -21,8 +22,6 @@ class NoneLatent:
 
 
 class SaveAVLatent:
-    def __init__(self):
-        self.output_dir = folder_paths.get_output_directory()
 
     @classmethod
     def INPUT_TYPES(s):
@@ -39,9 +38,11 @@ class SaveAVLatent:
     CATEGORY = CATEGORY
 
     def save(self, av_latent, filename_prefix, video_filename_prefix):
+        output_dir = folder_paths.get_output_directory()
+
         # Leverage ComfyUI API for standard subfolder, filename, and incrementing counter logic
         full_output_folder, filename, counter, subfolder, _ = folder_paths.get_save_image_path(
-            filename_prefix, self.output_dir
+            filename_prefix, output_dir
         )
 
         output_filename = f"{filename}_{counter:05d}.avlatent"
@@ -66,35 +67,13 @@ class SaveAVLatent:
         return (video_sync_latent_filename_prefix, )
 
 
-def get_saved_latents():
-    output_dir = folder_paths.get_output_directory()
-    files = []
-
-    if not os.path.exists(output_dir):
-        return []
-
-    # Recursively scan the output directory for avlatents
-    for root, _, filenames in os.walk(output_dir):
-        for f in filenames:
-            if f.endswith(".avlatent"):
-                full_path = os.path.join(root, f)
-                # Store paths relative to the output directory
-                rel_path = os.path.relpath(full_path, output_dir)
-                # Normalize slashes for ComfyUI cross-platform consistency
-                files.append((rel_path.replace("\\", "/"), os.path.getmtime(full_path)))
-
-    # Newest first
-    files.sort(key=lambda item: item[1], reverse=True)
-
-    return [f for f, _ in files]
-
-
 class LoadAVLatent:
+
     @classmethod
     def INPUT_TYPES(s):
         return {
             "required": {
-                "file_select": (get_saved_latents(), )
+                "file_select": (s.get_saved_latents(), )
             },
             "optional": {
                 "file_path": ("STRING", )
@@ -143,3 +122,28 @@ class LoadAVLatent:
         except Exception as e:
             print(f"LoadAVLatent: Failed to load safetensors. Passing None. Error: {e}")
             return (None, )
+
+
+    @staticmethod
+    def get_saved_latents():
+        output_dir = folder_paths.get_output_directory()
+        files = []
+
+        if not os.path.exists(output_dir):
+            return []
+
+        # Recursively scan the output directory for avlatents
+        for root, _, filenames in os.walk(output_dir):
+            for f in filenames:
+                if f.endswith(".avlatent"):
+                    full_path = os.path.join(root, f)
+                    # Store paths relative to the output directory
+                    rel_path = os.path.relpath(full_path, output_dir)
+                    # Normalize slashes for ComfyUI cross-platform consistency
+                    files.append((rel_path.replace("\\", "/"), os.path.getmtime(full_path)))
+
+        # Newest first
+        files.sort(key=lambda item: item[1], reverse=True)
+
+        return [f for f, _ in files]
+            

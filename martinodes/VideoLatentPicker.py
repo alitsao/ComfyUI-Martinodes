@@ -153,6 +153,7 @@ async def delete_video_and_latent(request):
 
 
 class VideoLatentPicker:
+
     @classmethod
     def INPUT_TYPES(s):
         return {"required": {
@@ -163,10 +164,10 @@ class VideoLatentPicker:
 
     RETURN_TYPES = ("STRING", )
     RETURN_NAMES = ("latent_path", )
-    FUNCTION = "pick"
+    FUNCTION = "run"
     CATEGORY = CATEGORY
 
-    def pick(self, video_regex, latent_pattern, selected_video):
+    def run(self, video_regex, latent_pattern, selected_video):
         latent_path = build_latent_path(selected_video, video_regex, latent_pattern) if selected_video else ""
         if selected_video and not latent_path:
             print(f"VideoLatentPicker: '{selected_video}' does not match regex '{video_regex}'.")

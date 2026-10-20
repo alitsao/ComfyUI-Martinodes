@@ -1,0 +1,188 @@
+{
+  "id": "b56accfb-7575-4771-868e-140dabf74399",
+  "revision": 0,
+  "last_node_id": 3,
+  "last_link_id": 2,
+  "nodes": [
+    {
+      "id": 1,
+      "type": "LoadAudio",
+      "pos": [
+        -592.7408847155657,
+        -1940.3181856675176
+      ],
+      "size": [
+        282.798828125,
+        136
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "AUDIO",
+          "type": "AUDIO",
+          "links": [
+            1
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.42.0",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        },
+        "Node name for S&R": "LoadAudio"
+      },
+      "widgets_values": [
+        "5min_book.mp3",
+        ""
+      ],
+      "widgets_values_named": {
+        "audio": "5min_book.mp3",
+        "upload": ""
+      }
+    },
+    {
+      "id": 2,
+      "type": "MARAudioSilenceSplitter",
+      "pos": [
+        -257.36465238092387,
+        -1937.9613969860116
+      ],
+      "size": [
+        282.939453125,
+        106
+      ],
+      "flags": {},
+      "order": 1,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "audio",
+          "type": "AUDIO",
+          "link": 1
+        }
+      ],
+      "outputs": [
+        {
+          "name": "audio",
+          "shape": 6,
+          "type": "AUDIO",
+          "links": [
+            2
+          ]
+        }
+      ],
+      "properties": {
+        "aux_id": "progmars/ComfyUI-Martinodes",
+        "ver": "7a90ff14017634840d3138efa83aa58e0c1d529b",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        },
+        "Node name for S&R": "MARAudioSilenceSplitter"
+      },
+      "widgets_values": [
+        5,
+        0.3,
+        35
+      ],
+      "widgets_values_named": {
+        "optimal_length": 5,
+        "minimal_silence": 0.3,
+        "silence_threshold_db": 35
+      }
+    },
+    {
+      "id": 3,
+      "type": "SaveAudioAdvanced",
+      "pos": [
+        60.817744864004794,
+        -1937.6570466793416
+      ],
+      "size": [
+        270,
+        160
+      ],
+      "flags": {},
+      "order": 2,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "audio",
+          "type": "AUDIO",
+          "link": 2
+        }
+      ],
+      "outputs": [
+        {
+          "name": "audio",
+          "type": "AUDIO",
+          "links": []
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.42.0",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        },
+        "Node name for S&R": "SaveAudioAdvanced"
+      },
+      "widgets_values": [
+        "longtalk/audio/split",
+        "mp3",
+        "V0"
+      ],
+      "widgets_values_named": {
+        "filename_prefix": "longtalk/audio/split",
+        "format": "mp3",
+        "format.quality": "V0"
+      }
+    }
+  ],
+  "links": [
+    [
+      1,
+      1,
+      0,
+      2,
+      0,
+      "AUDIO"
+    ],
+    [
+      2,
+      2,
+      0,
+      3,
+      0,
+      "AUDIO"
+    ]
+  ],
+  "groups": [],
+  "config": {},
+  "extra": {
+    "ue_links": [],
+    "ds": {
+      "scale": 0.7794913338419476,
+      "offset": [
+        845.3162392478845,
+        2249.399364046405
+      ]
+    },
+    "frontendVersion": "1.55.18",
+    "VHS_latentpreview": true,
+    "VHS_latentpreviewrate": 0,
+    "VHS_MetadataImage": false,
+    "VHS_KeepIntermediate": false
+  },
+  "version": 0.4
+}

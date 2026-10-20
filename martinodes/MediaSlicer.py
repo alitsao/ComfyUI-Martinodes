@@ -1,8 +1,6 @@
 from .shared import CATEGORY, list_head_tail
 
 class MediaSlicer:
-    def __init__(self):
-        pass
 
     @classmethod
     def INPUT_TYPES(s):

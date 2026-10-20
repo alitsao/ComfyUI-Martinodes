@@ -4,8 +4,6 @@ import comfy.nested_tensor
 
 
 class LatentAVSlicer:
-    def __init__(self):
-        pass
 
     @classmethod
     def INPUT_TYPES(s):
