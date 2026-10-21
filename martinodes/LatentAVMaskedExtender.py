@@ -14,10 +14,12 @@ class LatentAVMaskedExtender:
                 "mode": (["extend_tail", "prepend_head"], {"default": "extend_tail"}),
                 "overlap_duration_seconds": ("FLOAT", {"default": 1.0, "min": 0.1, "max": 60.0, "step": 0.1}),
                 "video_fps": ("FLOAT", {"default": 24.0, "min": 1.0, "max": 120.0, "step": 1.0}),
-                "video_mask_fade_seconds": ("FLOAT", {"default": 0.3, "min": 0.0, "max": 60.0, "step": 0.1}),
-                "audio_mask_fade_seconds": ("FLOAT", {"default": 0.3, "min": 0.0, "max": 60.0, "step": 0.1}),
+                "video_mask_fade_seconds": ("FLOAT", {"default": 0.0, "min": 0.0, "max": 60.0, "step": 0.1}),
+                "audio_mask_fade_seconds": ("FLOAT", {"default": 0.0, "min": 0.0, "max": 60.0, "step": 0.1}),
                 "trim_freeze_tail": ("BOOLEAN", {"default": False}),
-                "freeze_threshold": ("FLOAT", {"default": 1e-4, "min": 0.0, "max": 0.1, "step": 1e-5})
+                "freeze_threshold": ("FLOAT", {"default": 1e-4, "min": 0.0, "max": 0.1, "step": 1e-5}),
+                "keep_target_audio": ("BOOLEAN", {"default": False}),
+                "keep_target_video": ("BOOLEAN", {"default": False})
             },
             "optional": {
                 "extendable_latent": ("LATENT", )
@@ -33,11 +35,18 @@ class LatentAVMaskedExtender:
             audio_mask_fade_seconds,
             trim_freeze_tail, 
             freeze_threshold,
+            keep_target_audio=False,
+            keep_target_video=False,
             extendable_latent=None):
 
         if extendable_latent is None:
-            return (target_av_latent, )
-        
+            return (self.create_target_mask(
+                target_av_latent, mode,
+                0, 0,
+                0, 0,
+                keep_target_audio, keep_target_video
+            ), )
+
         params = MINIMAX_H3_PARAMS
 
         video_overlap_tokens, audio_overlap_tokens = align_duration_to_tokens(overlap_duration_seconds, video_fps, params)
@@ -45,7 +54,7 @@ class LatentAVMaskedExtender:
         audio_token_rate = params["audio_token_rate"]
         frame_multi = params["frame_multi"]
         frame_offset = params["frame_offset"]
-
+        
         video_fade_frames = video_mask_fade_seconds * video_fps
         video_fade_tokens = int(round(video_fade_frames * (frame_offset / frame_multi)))
         audio_fade_tokens = int(audio_mask_fade_seconds * audio_token_rate)
@@ -54,20 +63,145 @@ class LatentAVMaskedExtender:
             extendable_latent, target_av_latent, mode,
             video_overlap_tokens, audio_overlap_tokens, 
             video_fade_tokens, audio_fade_tokens,
-            trim_freeze_tail, freeze_threshold
+            trim_freeze_tail, freeze_threshold,
+            keep_target_audio, keep_target_video
         )
+
+
+    def create_target_mask(self, target_av_latent, mode, video_overlap_tokens,
+                           audio_overlap_tokens, video_fade_tokens, audio_fade_tokens,
+                           keep_target_audio=False, keep_target_video=False):
+        samples = target_av_latent["samples"]
+        tensors = unpack_samples(samples)
+        if len(tensors) != 2:
+            raise ValueError("LatentAVMaskedExtender: target latent must contain video and audio samples")
+
+        video_tensor, audio_tensor = tensors
+        video_time_dim = 2 if video_tensor.ndim >= 3 else 0
+        video_length = video_tensor.shape[video_time_dim]
+        height, width = video_tensor.shape[-2:]
+        video_overlap_tokens = min(video_overlap_tokens, video_length)
+        video_fade_tokens = min(video_fade_tokens, video_overlap_tokens)
+
+        mask_min = 0.0
+        mask_max = 1.0
+        mask_v = torch.ones(
+            (video_length, height, width), dtype=torch.float32, device=video_tensor.device
+        )
+
+        if mode == "extend_tail":
+            if video_overlap_tokens > video_fade_tokens:
+                mask_v[:video_overlap_tokens - video_fade_tokens] = mask_min
+            if video_fade_tokens > 0:
+                gradient = torch.linspace(
+                    mask_min, mask_max, video_fade_tokens,
+                    dtype=torch.float32, device=video_tensor.device
+                )
+                mask_v[video_overlap_tokens - video_fade_tokens:video_overlap_tokens] = gradient.view(-1, 1, 1)
+        else:
+            remainder_length = video_length - video_overlap_tokens
+            if video_overlap_tokens > video_fade_tokens:
+                mask_v[remainder_length + video_fade_tokens:] = mask_min
+            if video_fade_tokens > 0:
+                if video_fade_tokens == 1:
+                    gradient = torch.full(
+                        (1,), mask_min, dtype=torch.float32, device=video_tensor.device
+                    )
+                else:
+                    gradient = torch.linspace(
+                        mask_max, mask_min, video_fade_tokens,
+                        dtype=torch.float32, device=video_tensor.device
+                    )
+                mask_v[remainder_length:remainder_length + video_fade_tokens] = gradient.view(-1, 1, 1)
+        mask_v = mask_v.reshape((video_tensor.shape[0] * video_length, 1, height, width))
+
+        batch_size = audio_tensor.shape[0]
+        frequency_count, audio_length = audio_tensor.shape[-2:]
+        audio_overlap_tokens = min(audio_overlap_tokens, audio_length)
+        audio_fade_tokens = min(audio_fade_tokens, audio_overlap_tokens)
+        mask_a = torch.ones(
+            (batch_size, frequency_count, audio_length),
+            dtype=torch.float32,
+            device=audio_tensor.device
+        )
+        if mode == "extend_tail":
+            if audio_overlap_tokens > audio_fade_tokens:
+                mask_a[:, :, :audio_overlap_tokens - audio_fade_tokens] = mask_min
+            if audio_fade_tokens > 0:
+                gradient = torch.linspace(
+                    mask_min, mask_max, audio_fade_tokens,
+                    dtype=torch.float32, device=audio_tensor.device
+                )
+                mask_a[:, :, audio_overlap_tokens - audio_fade_tokens:audio_overlap_tokens] = gradient.view(1, 1, -1)
+        else:
+            remainder_length = audio_length - audio_overlap_tokens
+            if audio_overlap_tokens > audio_fade_tokens:
+                mask_a[:, :, remainder_length + audio_fade_tokens:] = mask_min
+            if audio_fade_tokens > 0:
+                gradient = torch.linspace(
+                    mask_max, mask_min, audio_fade_tokens,
+                    dtype=torch.float32, device=audio_tensor.device
+                )
+                mask_a[:, :, remainder_length:remainder_length + audio_fade_tokens] = gradient.view(1, 1, -1)
+        mask_a = mask_a.reshape((batch_size, 1, frequency_count, audio_length))
+
+        existing_masks = target_av_latent.get("noise_mask")
+        if existing_masks is not None:
+            existing_masks = unpack_samples(existing_masks)
+            if existing_masks:
+                old_video_mask = existing_masks[0]
+                if isinstance(old_video_mask, torch.Tensor):
+                    if old_video_mask.ndim == 4 and old_video_mask.shape[1] == 1:
+                        old_video_mask = old_video_mask.reshape(
+                            video_tensor.shape[0], -1, 1, height, width
+                        )
+                    elif old_video_mask.ndim == 4:
+                        old_video_mask = old_video_mask.unsqueeze(2)
+                    elif old_video_mask.ndim == 5 and old_video_mask.shape[1] == 1:
+                        old_video_mask = old_video_mask.permute(0, 2, 1, 3, 4)
+                    new_video_mask = mask_v.reshape(
+                        video_tensor.shape[0], video_length, 1, height, width
+                    )
+                    if old_video_mask.shape == new_video_mask.shape:
+                        old_video_mask = old_video_mask.to(device=mask_v.device, dtype=mask_v.dtype)
+                        mask_v = torch.where(
+                            new_video_mask == mask_max, old_video_mask, new_video_mask
+                        ).reshape_as(mask_v)
+
+                if len(existing_masks) > 1:
+                    old_audio_mask = existing_masks[1]
+                    if isinstance(old_audio_mask, torch.Tensor):
+                        if old_audio_mask.ndim == 4 and old_audio_mask.shape[1] == 1:
+                            old_audio_mask = old_audio_mask.squeeze(1)
+                        if old_audio_mask.ndim == 3 and old_audio_mask.shape == (
+                            batch_size, frequency_count, audio_length
+                        ):
+                            old_audio_mask = old_audio_mask.to(device=mask_a.device, dtype=mask_a.dtype)
+                            mask_a = torch.where(
+                                mask_a.squeeze(1) == mask_max, old_audio_mask, mask_a.squeeze(1)
+                            ).unsqueeze(1)
+
+        if keep_target_video:
+            mask_v = torch.zeros_like(mask_v)
+        if keep_target_audio:
+            mask_a = torch.zeros_like(mask_a)
+
+        out_av = target_av_latent.copy()
+        out_av["noise_mask"] = pack_samples(samples, [mask_v, mask_a])
+        return out_av
 
 
     def extend_masked(self, extendable_latent, target_av_latent, mode, video_overlap_tokens, 
                       audio_overlap_tokens, video_fade_tokens, audio_fade_tokens,
-                      trim_freeze_tail, freeze_threshold):
+                      trim_freeze_tail, freeze_threshold, keep_target_audio=False,
+                      keep_target_video=False):
         
         out_av = target_av_latent.copy()
         
         old_any_samples = extendable_latent["samples"]
-        new_v = target_av_latent["samples"]
-
         old_tensors = unpack_samples(old_any_samples)
+
+        new_v = target_av_latent["samples"]
         new_tensors = unpack_samples(new_v)
 
         if len(new_tensors) != 2:
@@ -314,7 +448,12 @@ class LatentAVMaskedExtender:
                                 mask_a = torch.where(mask_a == mask_max, old_audio_mask, mask_a)
                                 mask_a_reshaped = mask_a.reshape_as(mask_a_reshaped)
 
-                masks_out = [mask_v_reshaped, mask_a_reshaped]
+        if keep_target_video:
+            mask_v_reshaped = torch.zeros_like(mask_v_reshaped)
+        if keep_target_audio:
+            mask_a_reshaped = torch.zeros_like(mask_a_reshaped)
+
+        masks_out = [mask_v_reshaped, mask_a_reshaped]
         
         out_av["samples"] = pack_samples(new_v, tensors_out)
         out_av["noise_mask"] = pack_samples(new_v, masks_out)
@@ -329,4 +468,3 @@ class LatentAVMaskedExtender:
         if tensor.ndim == 4:
             return "audio" if tensor.shape[1] == 8 else "image"
         raise ValueError("LatentAVMaskedExtender: single-modality samples must be 4D or 5D tensors")
-

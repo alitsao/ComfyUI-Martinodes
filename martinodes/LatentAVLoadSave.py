@@ -6,18 +6,18 @@ import comfy.nested_tensor
 from .latentops import unpack_samples
 from .shared import CATEGORY
 
-class NoneLatent:
+class NonePlugger:
 
     @classmethod
     def INPUT_TYPES(s):
         return {"required": {}}
 
-    RETURN_TYPES = ("LATENT", )
-    RETURN_NAMES = ("latent", )
-    FUNCTION = "get_none"
+    RETURN_TYPES = ("*", )
+    RETURN_NAMES = ("any", )
+    FUNCTION = "run"
     CATEGORY = CATEGORY
 
-    def get_none(self):
+    def run(self):
         return (None, )
 
 

@@ -40,11 +40,29 @@ Retrieves information about the audio, passing the audio through for convenience
   - `samplerate`: Sample rate in Hz.
   - `channels`: Number of audio channels.
 
-### Audio batch loader (AudioBatchLoader)
-Loads audio files directly from a folder in ascending filename order. The folder may be an absolute path or a path relative to ComfyUI's input directory. Subfolders are not scanned.
+### Audio loader (AudioLoader)
+Loads audio file from the given path.
 
-- **Inputs**: `input_path`: Folder containing audio files.
-- **Outputs**: A list of `AUDIO` values, one for each file.
+- **Inputs**: `file_path`: Audio file path.
+- **Outputs**: `AUDIO` value.
+
+### List files in folder (FileLister)
+Lists all files directly in a folder in ascending filepath order. Subfolders are not scanned. Absolute paths are used as-is; relative paths are resolved against the ComfyUI output directory first, then the input directory.
+
+- **Inputs**: `input_path`: Absolute folder path or path relative to the ComfyUI output/input directory.
+- **Outputs**: A ComfyUI list of absolute filepaths (`STRING`).
+
+### Pick random batch item (BatchRandomPicker)
+Selects a random batch item deterministically using the seed from a NOISE input. The same seed and batch size select the same item.
+
+- **Inputs**: `noise` (`NOISE`), `any_batch` (any type)
+- **Output**: The selected item, retaining its original type.
+
+### Pick first or last batch item (BatchBoundPicker)
+Selects the first or last item from a batch, including ComfyUI list outputs such as filepaths from FileLister. Returns `None` when the batch is empty.
+
+- **Inputs**: `any_batch` (any type), `mode` (`first` or `last`)
+- **Output**: The selected item, retaining its original type.
 
 ### Resample audio (AudioResampler)
 Resamples audio to the target samplerate and channels. Useful when concatenating audios from different sources.
@@ -131,7 +149,8 @@ The implementation requires the latest ComfyUI with [native masking PR 15375](ht
   - `mode`: extend_tail (default to continue the `extendable_latent`) or prepend_head
   - `overlap_duration_seconds`: Duration of the loaded video head/tail to preserve. The part will be overlapped onto the end/beginning of the target_av latent, thus total length of the video will not be changed.
   - `video_fps`: Frame rate used to calculate synchronized video and audio token lengths.
-  - `video_mask_fade_seconds` and `audio_mask_fade_seconds`: To soften transitions and reduce occasional hard scene cuts. Higher values of 0.5 or more might be needed for `prepend_head` mode. Use 0 for single frame image latents.
+  - `video_mask_fade_seconds` and `audio_mask_fade_seconds`:  Try 0 first, as it seems the most stable. Larger values, although soften transitions and reduce occasional hard scene cuts, might introduce artifacts. Higher values of 0.5 or more might be needed for `prepend_head` mode. Use 0 for single frame image latents.
+  - `keep_target_audio` and `keep_target_video` (default: `false`): Set the corresponding component's noise mask to all zeros so the sampler leaves the target audio or video stream unchanged.
   - `trim_freeze_tail` and `freeze_threshold`: Might help in cases when the latent ends with a frozen part (sometimes happens with FLF2V). WARNING: Not tested in action, so might be totally useless.
 - **Outputs**: `av_latent` with a `noise_mask` covering the preserved video and audio tails.
 

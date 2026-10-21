@@ -31,12 +31,12 @@
       "properties": {
         "cnr_id": "comfy-core",
         "ver": "0.42.0",
+        "Node name for S&R": "LoadAudio",
         "ue_properties": {
           "widget_ue_connectable": {},
           "input_ue_unconnectable": {},
           "version": "7.8"
-        },
-        "Node name for S&R": "LoadAudio"
+        }
       },
       "widgets_values": [
         "5min_book.mp3",
@@ -81,12 +81,12 @@
       "properties": {
         "aux_id": "progmars/ComfyUI-Martinodes",
         "ver": "7a90ff14017634840d3138efa83aa58e0c1d529b",
+        "Node name for S&R": "MARAudioSilenceSplitter",
         "ue_properties": {
           "widget_ue_connectable": {},
           "input_ue_unconnectable": {},
           "version": "7.8"
-        },
-        "Node name for S&R": "MARAudioSilenceSplitter"
+        }
       },
       "widgets_values": [
         5,
@@ -97,7 +97,9 @@
         "optimal_length": 5,
         "minimal_silence": 0.3,
         "silence_threshold_db": 35
-      }
+      },
+      "color": "#232",
+      "bgcolor": "#353"
     },
     {
       "id": 3,
@@ -130,12 +132,12 @@
       "properties": {
         "cnr_id": "comfy-core",
         "ver": "0.42.0",
+        "Node name for S&R": "SaveAudioAdvanced",
         "ue_properties": {
           "widget_ue_connectable": {},
           "input_ue_unconnectable": {},
           "version": "7.8"
-        },
-        "Node name for S&R": "SaveAudioAdvanced"
+        }
       },
       "widgets_values": [
         "longtalk/audio/split",
@@ -172,10 +174,10 @@
   "extra": {
     "ue_links": [],
     "ds": {
-      "scale": 0.7794913338419476,
+      "scale": 1.0375029653436325,
       "offset": [
-        845.3162392478845,
-        2249.399364046405
+        608.0368298077823,
+        2151.386150208197
       ]
     },
     "frontendVersion": "1.55.18",

@@ -1,8 +1,8 @@
 {
   "id": "64055d6f-7d5b-4287-a1ef-284ada605a9f",
   "revision": 0,
-  "last_node_id": 22,
-  "last_link_id": 23,
+  "last_node_id": 23,
+  "last_link_id": 25,
   "nodes": [
     {
       "id": 7,
@@ -18,13 +18,13 @@
       "flags": {
         "collapsed": false
       },
-      "order": 4,
+      "order": 6,
       "mode": 0,
       "inputs": [
         {
           "name": "samples",
           "type": "LATENT",
-          "link": 17
+          "link": 24
         },
         {
           "name": "vae",
@@ -68,13 +68,13 @@
       "flags": {
         "collapsed": false
       },
-      "order": 5,
+      "order": 7,
       "mode": 0,
       "inputs": [
         {
           "name": "samples",
           "type": "LATENT",
-          "link": 18
+          "link": 25
         },
         {
           "name": "vae",
@@ -215,10 +215,10 @@
       ],
       "size": [
         709.2013812609425,
-        738.5474493812007
+        747.0113259931773
       ],
       "flags": {},
-      "order": 7,
+      "order": 8,
       "mode": 0,
       "inputs": [
         {
@@ -267,7 +267,7 @@
       "widgets_values": {
         "frame_rate": 24,
         "loop_count": 0,
-        "filename_prefix": "video/Minimax_H3_join",
+        "filename_prefix": "longtalk/video/h3_joined",
         "format": "video/h264-mp4",
         "pix_fmt": "yuv420p",
         "crf": 19,
@@ -279,20 +279,29 @@
           "hidden": false,
           "paused": false,
           "params": {
-            "filename": "Minimax_H3_join_00004-audio.mp4",
-            "subfolder": "video",
+            "filename": "h3_joined_00001-audio.mp4",
+            "subfolder": "longtalk\\video",
             "type": "output",
             "format": "video/h264-mp4",
             "frame_rate": 24,
-            "workflow": "Minimax_H3_join_00004.png",
-            "fullpath": "D:\\GAN\\Comfy\\ComfyUI\\output\\video\\Minimax_H3_join_00004-audio.mp4"
+            "workflow": "h3_joined_00001.png",
+            "fullpath": "D:\\GAN\\Comfy\\ComfyUI\\output\\longtalk\\video\\h3_joined_00001-audio.mp4",
+            "metadata": {
+              "kind": "video",
+              "width": 608,
+              "height": 352,
+              "duration": 22.166666666666668,
+              "fps": 24,
+              "frame_count": 532
+            },
+            "id": "02ed56ab-79e5-4c18-aeb7-838941cdfd89"
           }
         }
       },
       "widgets_values_named": {
         "frame_rate": 24,
         "loop_count": 0,
-        "filename_prefix": "video/Minimax_H3_join",
+        "filename_prefix": "longtalk/video/h3_joined",
         "format": "video/h264-mp4",
         "pix_fmt": "yuv420p",
         "crf": 19,
@@ -304,13 +313,22 @@
           "hidden": false,
           "paused": false,
           "params": {
-            "filename": "Minimax_H3_join_00004-audio.mp4",
-            "subfolder": "video",
+            "filename": "h3_joined_00001-audio.mp4",
+            "subfolder": "longtalk\\video",
             "type": "output",
             "format": "video/h264-mp4",
             "frame_rate": 24,
-            "workflow": "Minimax_H3_join_00004.png",
-            "fullpath": "D:\\GAN\\Comfy\\ComfyUI\\output\\video\\Minimax_H3_join_00004-audio.mp4"
+            "workflow": "h3_joined_00001.png",
+            "fullpath": "D:\\GAN\\Comfy\\ComfyUI\\output\\longtalk\\video\\h3_joined_00001-audio.mp4",
+            "metadata": {
+              "kind": "video",
+              "width": 608,
+              "height": 352,
+              "duration": 22.166666666666668,
+              "fps": 24,
+              "frame_count": 532
+            },
+            "id": "02ed56ab-79e5-4c18-aeb7-838941cdfd89"
           }
         }
       }
@@ -319,8 +337,8 @@
       "id": 20,
       "type": "MARLoadAVLatent",
       "pos": [
-        -1368.8907734537765,
-        4792.421727837276
+        -1557.250200157488,
+        4806.292155035323
       ],
       "size": [
         270,
@@ -328,16 +346,13 @@
       ],
       "flags": {},
       "order": 2,
-      "mode": 0,
+      "mode": 4,
       "inputs": [],
       "outputs": [
         {
           "name": "av_latent",
           "type": "LATENT",
-          "links": [
-            17,
-            18
-          ]
+          "links": []
         }
       ],
       "properties": {
@@ -351,11 +366,11 @@
         }
       },
       "widgets_values": [
-        "video/latents/join_00001.avlatent",
+        "longtalk/latents/join_00001.avlatent",
         ""
       ],
       "widgets_values_named": {
-        "file_select": "video/latents/join_00001.avlatent",
+        "file_select": "longtalk/latents/join_00001.avlatent",
         "file_path": ""
       },
       "color": "#232",
@@ -373,7 +388,7 @@
         82
       ],
       "flags": {},
-      "order": 6,
+      "order": 5,
       "mode": 0,
       "inputs": [
         {
@@ -400,11 +415,11 @@
         }
       },
       "widgets_values": [
-        "video/latents/join",
+        "longtalk/latents/joined",
         "video"
       ],
       "widgets_values_named": {
-        "filename_prefix": "video/latents/join",
+        "filename_prefix": "longtalk/latents/joined",
         "video_filename_prefix": "video"
       },
       "color": "#232",
@@ -430,7 +445,9 @@
           "name": "av_latent",
           "type": "LATENT",
           "links": [
-            20
+            20,
+            24,
+            25
           ]
         }
       ],
@@ -445,14 +462,14 @@
         }
       },
       "widgets_values": [
-        "D:\\GAN\\Comfy\\ComfyUI\\output\\video\\extension_tests\\last_frame_demo",
+        "longtalk/latents",
         24,
         1,
         "crossfade",
         "crossfade"
       ],
       "widgets_values_named": {
-        "folder_path": "D:\\GAN\\Comfy\\ComfyUI\\output\\video\\extension_tests\\last_frame_demo",
+        "folder_path": "longtalk/latents",
         "video_fps": 24,
         "overlap_duration_seconds": 1,
         "video_overlap_resolve": "crossfade",
@@ -460,6 +477,39 @@
       },
       "color": "#232",
       "bgcolor": "#353"
+    },
+    {
+      "id": 23,
+      "type": "MarkdownNote",
+      "pos": [
+        -1573.5534872106052,
+        4256.6411096325455
+      ],
+      "size": [
+        513.1174635585539,
+        88
+      ],
+      "flags": {},
+      "order": 4,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [],
+      "title": "READ ME!",
+      "properties": {
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "version": "7.8",
+          "input_ue_unconnectable": {}
+        }
+      },
+      "widgets_values": [
+        "Select the folder where the latents are stored and they will be merged into a single latent file and then decoded into a video. It takes some time, depending on the length and resolution of the latent."
+      ],
+      "widgets_values_named": {
+        "text": "Select the folder where the latents are stored and they will be merged into a single latent file and then decoded into a video. It takes some time, depending on the length and resolution of the latent."
+      },
+      "color": "#432",
+      "bgcolor": "#653"
     }
   ],
   "links": [
@@ -478,22 +528,6 @@
       18,
       1,
       "AUDIO"
-    ],
-    [
-      17,
-      20,
-      0,
-      7,
-      0,
-      "LATENT"
-    ],
-    [
-      18,
-      20,
-      0,
-      8,
-      0,
-      "LATENT"
     ],
     [
       20,
@@ -518,12 +552,28 @@
       8,
       1,
       "VAE"
+    ],
+    [
+      24,
+      22,
+      0,
+      7,
+      0,
+      "LATENT"
+    ],
+    [
+      25,
+      22,
+      0,
+      8,
+      0,
+      "LATENT"
     ]
   ],
   "groups": [
     {
       "id": 1,
-      "title": "1. Concat all in a folder (bypass when running the second group)",
+      "title": "1. Concat all in a folder",
       "bounding": [
         -1603.5363788387876,
         4378.823763833112,
@@ -535,7 +585,7 @@
     },
     {
       "id": 2,
-      "title": "2. Decode (bypass when running the first group)",
+      "title": "2. Decode",
       "bounding": [
         -1628.0065089863513,
         4704.354633727287,
@@ -550,14 +600,14 @@
   "extra": {
     "ue_links": [],
     "ds": {
-      "scale": 0.9849732675807977,
+      "scale": 0.2853116706110125,
       "offset": [
-        1899.5486125699358,
-        -4179.419298274788
+        2697.0394328690977,
+        -3713.269158819171
       ]
     },
     "links_added_by_ue": [],
-    "frontendVersion": "1.53.10",
+    "frontendVersion": "1.55.18",
     "VHS_latentpreview": true,
     "VHS_latentpreviewrate": 0,
     "VHS_MetadataImage": false,

@@ -108,7 +108,7 @@ class LatentAVInfo:
         if label == "video":
             if mask.ndim == 4 and shape[0] == batch_size * video_tokens and shape[1] == 1:
                 return (
-                    f"batch={batch_size}, video_tokens={video_tokens} (flattened with batch), "
+                    f"batch={batch_size}, video_tokens={video_tokens}, "
                     f"channels={shape[1]}, latent_resolution={shape[3]}x{shape[2]}"
                 )
             if mask.ndim == 4 and shape[0] == batch_size and shape[1] == video_tokens:
