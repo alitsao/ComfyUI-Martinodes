@@ -19,8 +19,7 @@ class AudioInfo:
     CATEGORY = CATEGORY
     DESCRIPTION = "Retrieves information about the audio, passing the audio through for convenience."
 
-    def run(self,  **kwargs):
-        audio = kwargs.get("audio", None)
+    def run(self, audio):
         if audio is None:
              raise Exception("No audio provided.")
 

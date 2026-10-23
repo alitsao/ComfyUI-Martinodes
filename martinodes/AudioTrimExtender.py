@@ -8,9 +8,13 @@ class AudioTrimExtender:
         return {
             "required": {
                 "audio": ("AUDIO", {}),
-                "duration_seconds" : ("FLOAT", { "default" : 0.0 }),
+                "duration_seconds" : ("FLOAT", { "default" : 0.00, "step": 0.01 }),
                 "pad" : (["start", "end"], { "default" : "end" }),
                 "crop" : (["start", "end"], { "default" : "end" }),
+            },
+            "optional": {
+                "fps": ("FLOAT", {"default": 24.0, "min": 1.0, "max": 120.0, "step": 1.0}),
+                "duration_frames": ("INT", {"default": 0, "min": 0}),
             },
         }
 
@@ -23,14 +27,14 @@ class AudioTrimExtender:
     CATEGORY = CATEGORY
     DESCRIPTION = "Makes audio to have the specified duration, cropping or padding as needed."
 
-    def run(self,  **kwargs):
-        duration_seconds = kwargs.get("duration_seconds", 0.0)
-        pad = kwargs.get("pad", "end")
-        crop = kwargs.get("crop", "end")
+
+    def run(self, audio, duration_seconds=0.0, pad="end", crop="end", fps=24.0, duration_frames=0):
+        if duration_seconds == 0:
+            if fps <= 0:
+                raise ValueError("fps must be greater than zero when duration_seconds is 0.")
+            duration_seconds = duration_frames / fps
 
         # ComfyUI AUDIO structure: {"waveform": tensor(batch, channels, samples), "sample_rate": int}
-        audio = kwargs.get("audio", None)
-
         if audio is None:
              raise Exception("No audio provided to process.")
 

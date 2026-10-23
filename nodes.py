@@ -4,8 +4,8 @@ from .martinodes.AudioTrimExtender import AudioTrimExtender
 from .martinodes.AudioInfo import AudioInfo
 from .martinodes.AudioLoader import AudioLoader
 from .martinodes.AudioSilenceSplitter import AudioSilenceSplitter
+from .martinodes.AudioIterator import AudioIterator
 from .martinodes.LatentAVInfo import LatentAVInfo
-from .martinodes.MediaTrimmer import MediaTrimmer
 from .martinodes.MediaOverlappingConcatenator import MediaOverlappingConcatenator
 from .martinodes.LatentAVMaskedExtender import LatentAVMaskedExtender
 from .martinodes.LatentAVLoadSave import NonePlugger, SaveAVLatent, LoadAVLatent
@@ -24,10 +24,10 @@ NODE_CLASS_MAPPINGS = {
     "MARMediaSlicer": MediaSlicer,
     "MARAudioResampler": AudioResampler,
     "MARAudioTrimExtender": AudioTrimExtender,
-    "MARMediaTrimmer": MediaTrimmer,
     "MARAudioInfo": AudioInfo,
     "MARAudioLoader": AudioLoader,
     "MARAudioSilenceSplitter": AudioSilenceSplitter,
+    "MARAudioIterator": AudioIterator,
     "MARMediaOverlappingConcatenator": MediaOverlappingConcatenator,
     "MARLatentAVMaskedExtender": LatentAVMaskedExtender,
     "MARLatentAVInfo": LatentAVInfo,
@@ -52,8 +52,8 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "MARAudioInfo": "Audio info",
     "MARAudioLoader": "Load audio from path",
     "MARAudioSilenceSplitter": "Split audio at silences",
+    "MARAudioIterator": "Iterate audio slices",
     "MARAudioResampler": "Resample audio",
-    "MARMediaTrimmer": "Trim media",
     "MARAudioTrimExtender": "Ensure audio duration",
     "MARLatentAVInfo": "Video+audio latent info",
     "MARMediaOverlappingConcatenator": "Concatenate media",

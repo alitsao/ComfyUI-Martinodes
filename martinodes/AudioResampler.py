@@ -21,16 +21,11 @@ class AudioResampler:
     CATEGORY = CATEGORY
     DESCRIPTION = "Resamples audio to the target samplerate and channels. Useful when concatenating audios from different sources."
 
-    def run(self,  **kwargs):
-
-        samplerate = kwargs.get("samplerate", 24000)
-        channels = kwargs.get("channels", 1) 
+    def run(self, audio, samplerate, channels):
         if channels < 1 or channels > 2:
              raise Exception("Only 1 or 2 channels are supported.")
        
         # ComfyUI AUDIO structure: {"waveform": tensor(batch, channels, samples), "sample_rate": int}
-        audio = kwargs.get("audio", None)
-
         if audio is None:
              raise Exception("No audio provided to resample.")
 

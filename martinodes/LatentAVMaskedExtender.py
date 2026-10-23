@@ -50,6 +50,8 @@ class LatentAVMaskedExtender:
         params = MINIMAX_H3_PARAMS
 
         video_overlap_tokens, audio_overlap_tokens = align_duration_to_tokens(overlap_duration_seconds, video_fps, params)
+        
+        # print(f"video_overlap_tokens: {video_overlap_tokens}, audio_overlap_tokens: {audio_overlap_tokens}")
 
         audio_token_rate = params["audio_token_rate"]
         frame_multi = params["frame_multi"]

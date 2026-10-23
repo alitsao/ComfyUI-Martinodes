@@ -43,7 +43,7 @@ class FileLister:
         raise FileNotFoundError(f"FileLister: Folder not found: '{input_path}'")
 
     @classmethod
-    def IS_CHANGED(cls, input_path):
+    def IS_CHANGED(cls, input_path, refresh_trigger=0):
         try:
             folder = cls.resolve_folder(input_path)
         except FileNotFoundError:

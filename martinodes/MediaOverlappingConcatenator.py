@@ -7,21 +7,21 @@ class MediaOverlappingConcatenator:
     def INPUT_TYPES(s):
         return {
             "optional": {
-                "images_1": ("IMAGE", {}),
+                "video_1": ("IMAGE", {}),
                 "audio_1": ("AUDIO", {}),
-                "images_2": ("IMAGE", {}),
+                "video_2": ("IMAGE", {}),
                 "audio_2": ("AUDIO", {}),
             },
             "required" : {
                 "video_fps" : ("FLOAT", { "default" : 24.0 }),
                 "overlap_duration_seconds" : ("FLOAT", { "default" : 0.0 }),
-                "video_overlap_resolve" : (["images_1", "images_2", "crossfade"], { "default" : "crossfade" }),
+                "video_overlap_resolve" : (["video_1", "video_2", "crossfade"], { "default" : "crossfade" }),
                 "audio_overlap_resolve" : (["audio_1", "audio_2", "crossfade"], { "default" : "crossfade" }),
             },
         }
 
     RETURN_TYPES = ("IMAGE", "AUDIO")
-    RETURN_NAMES = ("images", "audio")
+    RETURN_NAMES = ("video", "audio")
 
     SEARCH_ALIASES = ["concatenate video", "concatenate audio", "join videos", "join audio"]
 
@@ -29,41 +29,40 @@ class MediaOverlappingConcatenator:
     CATEGORY = CATEGORY
     DESCRIPTION = "Concatenates two videos and / or audios, applying overlapping logic."
 
-    def run(self,  **kwargs):
-        overlap_duration_seconds = kwargs.get("overlap_duration_seconds", 0.0)
-        video_fps = kwargs.get("video_fps", 24.0)
-        video_overlap_method = kwargs.get("video_overlap_resolve", "crossfade")
-        audio_overlap_method = kwargs.get("audio_overlap_resolve", "crossfade")
-        
-        frames_1 = kwargs.get("images_1", [])
-        audio_1 = kwargs.get("audio_1", [])
-        
-        frames_2 = kwargs.get("images_2", [])
-        audio_2 = kwargs.get("audio_2", [])
-
+    def run(
+        self,
+        video_fps,
+        overlap_duration_seconds,
+        video_overlap_resolve,
+        audio_overlap_resolve,
+        video_1=None,
+        audio_1=None,
+        video_2=None,
+        audio_2=None,
+    ):
         out_images = None
-        if len(frames_1) > 0 and len(frames_2) > 0:            
+        if video_1 is not None and len(video_1) > 0 and video_2 is not None and len(video_2) > 0:
              overlap_frames_count = int(overlap_duration_seconds * video_fps)
              
-             min_len = min(len(frames_1), len(frames_2))
+             min_len = min(len(video_1), len(video_2))
              if overlap_frames_count > min_len:
                   overlap_frames_count = min_len
 
              if overlap_frames_count <= 0:
-                 out_images = torch.cat((frames_1, frames_2), dim=0)
+                 out_images = torch.cat((video_1, video_2), dim=0)
              else:
-                 pre_overlap = frames_1[:-overlap_frames_count]
-                 post_overlap = frames_2[overlap_frames_count:]
+                 pre_overlap = video_1[:-overlap_frames_count]
+                 post_overlap = video_2[overlap_frames_count:]
                  
-                 overlap_1 = frames_1[-overlap_frames_count:]
-                 overlap_2 = frames_2[:overlap_frames_count]
+                 overlap_1 = video_1[-overlap_frames_count:]
+                 overlap_2 = video_2[:overlap_frames_count]
                  
-                 if video_overlap_method == "images_1":
+                 if video_overlap_resolve == "video_1":
                      overlap_part = overlap_1
-                 elif video_overlap_method == "images_2":
+                 elif video_overlap_resolve == "video_2":
                      overlap_part = overlap_2
                  else: # crossfade
-                     device = frames_1.device
+                     device = video_1.device
                      alpha = torch.linspace(0, 1, overlap_frames_count, device=device).view(-1, 1, 1, 1)
                      # Linear interpolation
                      overlap_part = overlap_1 * (1.0 - alpha) + overlap_2 * alpha
@@ -71,13 +70,13 @@ class MediaOverlappingConcatenator:
                  # Combine: pre_overlap + overlap_part + post_overlap
                  out_images = torch.cat((pre_overlap, overlap_part, post_overlap), dim=0)
 
-        elif len(frames_1) > 0 is not None:
-            out_images = frames_1
-        elif len(frames_2) > 0 is not None:
-            out_images = frames_2
+        elif video_1 is not None and len(video_1) > 0:
+            out_images = video_1
+        elif video_2 is not None and len(video_2) > 0:
+            out_images = video_2
         
         out_audio = None
-        if len(audio_1) > 0 and len(audio_2) is not None:
+        if audio_1 and audio_2:
             sr1 = audio_1["sample_rate"]
             sr2 = audio_2["sample_rate"]
             target_sr = max(sr1, sr2)
@@ -112,9 +111,9 @@ class MediaOverlappingConcatenator:
                 overlap_1 = wave_1[..., -overlap_samples_count:]
                 overlap_2 = wave_2[..., :overlap_samples_count]
                 
-                if audio_overlap_method == "audio_1":
+                if audio_overlap_resolve == "audio_1":
                     overlap_part = overlap_1
-                elif audio_overlap_method == "audio_2":
+                elif audio_overlap_resolve == "audio_2":
                     overlap_part = overlap_2
                 else: # crossfade
                     device = wave_1.device
@@ -127,9 +126,9 @@ class MediaOverlappingConcatenator:
             
             out_audio = {"waveform": out_wave, "sample_rate": sr}
 
-        elif len(audio_1) > 0:
+        elif audio_1:
             out_audio = audio_1
-        elif len(audio_2) > 0:
+        elif audio_2:
             out_audio = audio_2
 
         return (out_images, out_audio)

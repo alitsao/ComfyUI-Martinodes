@@ -16,20 +16,11 @@ You'll need a git client. Open your terminal or command window, navigate to your
 ### Media head or tail (MediaSlicer)
 Takes a slice with requested length from the start or the end of the loaded media. If using both audio and video, the inputs must be the same length.
 
-- **Inputs**: `images` (optional), `audio` (optional)
+- **Inputs**: `video` (optional), `audio` (optional)
 - **Parameters**: 
   - `duration_seconds`: Length of the slice to take.
   - `video_fps`: Frame rate for video calculation.
   - `take_from`: "start" or "end".
-
-### Trim media (MediaTrimmer)
-Trims video and/or audio from any end.
-
-- **Inputs**: `images` (optional), `audio` (optional)
-- **Parameters**: 
-  - `trim_seconds`: Amount of time to trim.
-  - `video_fps`: Frame rate for video calculation.
-  - `trim_from`: End to trim from ("start", "end").
 
 ### Audio info (AudioInfo)
 Retrieves information about the audio, passing the audio through for convenience.
@@ -77,7 +68,9 @@ Makes audio to have the specified duration, cropping or padding with silence as 
 
 - **Inputs**: `audio`
 - **Parameters**: 
-  - `duration_seconds`: Target duration.
+  - `duration_seconds`: Target duration in seconds. If set to `0`, the target duration is calculated from `duration_frames` divided by `fps`.
+  - `fps`: Frame rate used with `duration_frames` when `duration_seconds` is `0` (default: 24).
+  - `duration_frames`: Target duration in frames when `duration_seconds` is `0` (default: 0).
   - `pad`: Where to add silence if too short ("start" or "end").
   - `crop`: Where to cut if too long ("start" or "end").
 
@@ -95,10 +88,10 @@ Splits audio near detected pauses trying to achieve chunks of optimal length, al
 Concatenates two videos and/or audios, applying overlapping logic (crossfade or simple join).
 If incoming audio channels or samplerates do not match, they will be resampled to the highest samplerate and channels of both audios.
 
-- **Inputs**: `images_1`, `audio_1`, `images_2`, `audio_2` (all optional, but need pairs to work meaningfully)
+- **Inputs**: `video_1`, `audio_1`, `video_2`, `audio_2` (all optional, but need pairs to work meaningfully)
 - **Parameters**: 
   - `overlap_duration_seconds`: Duration of the overlap/crossfade.
-  - `video_overlap_resolve`: How to handle video overlap ("crossfade", "images_1", "images_2").
+  - `video_overlap_resolve`: How to handle video overlap ("crossfade", "video_1", "video_2").
   - `audio_overlap_resolve`: How to handle audio overlap ("crossfade", "audio_1", "audio_2").
 
 ### Concatenate video+audio latents (LatentOverlappingConcatenator)
