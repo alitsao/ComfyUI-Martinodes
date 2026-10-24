@@ -1,7 +1,7 @@
 from .shared import CATEGORY
 
 
-class AudioIterator:
+class AudioListSlicer:
     @classmethod
     def INPUT_TYPES(cls):
         return {
@@ -14,9 +14,9 @@ class AudioIterator:
             },
         }
 
-    RETURN_TYPES = ("AUDIO",)
-    RETURN_NAMES = ("slices",)
-    OUTPUT_IS_LIST = (True,)
+    RETURN_TYPES = ("AUDIO", "INT")
+    RETURN_NAMES = ("slices", "list_length")
+    OUTPUT_IS_LIST = (True, False)
     FUNCTION = "run"
     CATEGORY = CATEGORY
     DESCRIPTION = "Splits audio into consecutive slices, with an optional duration for the first slice."
@@ -51,4 +51,4 @@ class AudioIterator:
                 start = end
                 next_slice_samples = default_samples
 
-        return (slices,)
+        return (slices, len(slices))

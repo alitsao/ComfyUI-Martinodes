@@ -1,7 +1,7 @@
 from .shared import CATEGORY
 import torch
 
-class AudioTrimExtender:
+class AudioDurationMatcher:
 
     @classmethod
     def INPUT_TYPES(s):

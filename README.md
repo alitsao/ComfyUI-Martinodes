@@ -13,14 +13,18 @@ You'll need a git client. Open your terminal or command window, navigate to your
 
 ## Nodes
 
-### Media head or tail (MediaSlicer)
-Takes a slice with requested length from the start or the end of the loaded media. If using both audio and video, the inputs must be the same length.
+### Repeat workflow until BOOL (WorkflowLoop)
+Place this output node in a workflow and connect a boolean `repeat` condition. Queue the workflow once to start. After each successful run, the ComfyUI frontend queues the same workflow again when `repeat` is `true`. The default is `false`, which ends the loop after the current run. Each iteration is a separate ComfyUI run; an execution error does not trigger another run.
+
+### Slice media (MediaSlicer)
+Takes a slice of the loaded media between a start offset and an end offset. The end offset is measured from the end by default, or from the start when selected.
 
 - **Inputs**: `video` (optional), `audio` (optional)
 - **Parameters**: 
-  - `duration_seconds`: Length of the slice to take.
-  - `video_fps`: Frame rate for video calculation.
-  - `take_from`: "start" or "end".
+  - `start_offset_seconds`: Time offset from the start of the media (default: `0.0`).
+  - `end_offset_seconds`: End offset in seconds (default: `0.0`).
+  - `end_offset_from`: Whether the end offset is measured from the `"end"` (default) or `"start"`.
+  - `video_fps`: Frame rate used to calculate video frame offsets (default: `24.0`).
 
 ### Audio info (AudioInfo)
 Retrieves information about the audio, passing the audio through for convenience.
@@ -63,7 +67,7 @@ Resamples audio to the target samplerate and channels. Useful when concatenating
   - `samplerate`: Target sample rate in Hz (e.g., 24000, 44100).
   - `channels`: Target channels (1 for Mono, 2 for Stereo).
 
-### Ensure audio duration (AudioTrimExtender)
+### Ensure audio duration (AudioDurationMatcher)
 Makes audio to have the specified duration, cropping or padding with silence as needed.
 
 - **Inputs**: `audio`
@@ -74,6 +78,14 @@ Makes audio to have the specified duration, cropping or padding with silence as 
   - `pad`: Where to add silence if too short ("start" or "end").
   - `crop`: Where to cut if too long ("start" or "end").
 
+### Pad audio (AudioPadder)
+Adds silence to the start and/or end of audio without cropping or changing the original audio.
+
+- **Inputs**: `audio`
+- **Parameters**:
+  - `pad_start_seconds`: Seconds of silence to add before the audio.
+  - `pad_end_seconds`: Seconds of silence to add after the audio.
+
 ### Split audio at silences (AudioSilenceSplitter)
 Splits audio near detected pauses trying to achieve chunks of optimal length, allowing some length drift before/after optimal_length, whichever is closer. If getting too long fragments, reduce minimal_silence or increase silence_threshold_db, especially when having background music or noise.
 
@@ -83,6 +95,17 @@ Splits audio near detected pauses trying to achieve chunks of optimal length, al
   - `minimal_silence`: Minimum pause duration to consider a boundary (default 0.3 seconds).
   - `silence_threshold_db`: Silence level relative to the signal peak in decibels (default 35 dB).
 - **Outputs**: A list of audio fragments.
+
+### Slice audio into list (AudioListSlicer)
+Splits audio into consecutive slices of a fixed duration. An optional first-slice duration lets you make the initial slice a different length; subsequent slices use `slice_duration`. The final slice may be shorter than the requested duration. For batched audio, slicing is performed for each batch item.
+
+- **Inputs**: `audio`
+- **Parameters**:
+  - `slice_duration`: Duration in seconds for slices after the first (default: 5.0).
+  - `first_slice_duration`: Optional duration in seconds for the first slice. If `0`, the first slice uses `slice_duration` (default: 0.0).
+- **Outputs**:
+  - `slices`: A ComfyUI list of `AUDIO` slices.
+  - `list_length` (`INT`): Number of slices produced.
 
 ### Concatenate media (MediaOverlappingConcatenator)
 Concatenates two videos and/or audios, applying overlapping logic (crossfade or simple join).

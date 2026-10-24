@@ -1,8 +1,8 @@
 {
   "id": "64055d6f-7d5b-4287-a1ef-284ada605a9f",
   "revision": 0,
-  "last_node_id": 23,
-  "last_link_id": 25,
+  "last_node_id": 25,
+  "last_link_id": 26,
   "nodes": [
     {
       "id": 7,
@@ -18,7 +18,7 @@
       "flags": {
         "collapsed": false
       },
-      "order": 6,
+      "order": 7,
       "mode": 0,
       "inputs": [
         {
@@ -68,7 +68,7 @@
       "flags": {
         "collapsed": false
       },
-      "order": 7,
+      "order": 8,
       "mode": 0,
       "inputs": [
         {
@@ -210,15 +210,15 @@
       "id": 18,
       "type": "VHS_VideoCombine",
       "pos": [
-        -652.7806028205005,
-        4797.404448786949
+        -653.7872159060713,
+        4781.403306523673
       ],
       "size": [
-        709.2013812609425,
-        747.0113259931773
+        737.505506146243,
+        685.9554439371914
       ],
       "flags": {},
-      "order": 8,
+      "order": 9,
       "mode": 0,
       "inputs": [
         {
@@ -290,11 +290,11 @@
               "kind": "video",
               "width": 608,
               "height": 352,
-              "duration": 22.166666666666668,
+              "duration": 17.916666666666668,
               "fps": 24,
-              "frame_count": 532
+              "frame_count": 430
             },
-            "id": "02ed56ab-79e5-4c18-aeb7-838941cdfd89"
+            "id": "a5dabd78-c2ae-4363-8bb6-929f72625eb7"
           }
         }
       },
@@ -324,11 +324,11 @@
               "kind": "video",
               "width": 608,
               "height": 352,
-              "duration": 22.166666666666668,
+              "duration": 17.916666666666668,
               "fps": 24,
-              "frame_count": 532
+              "frame_count": 430
             },
-            "id": "02ed56ab-79e5-4c18-aeb7-838941cdfd89"
+            "id": "a5dabd78-c2ae-4363-8bb6-929f72625eb7"
           }
         }
       }
@@ -388,8 +388,8 @@
         82
       ],
       "flags": {},
-      "order": 5,
-      "mode": 0,
+      "order": 6,
+      "mode": 4,
       "inputs": [
         {
           "name": "av_latent",
@@ -503,13 +503,58 @@
         }
       },
       "widgets_values": [
-        "Select the folder where the latents are stored and they will be merged into a single latent file and then decoded into a video. It takes some time, depending on the length and resolution of the latent."
+        "Select the folder where the latents are stored and they will be merged into a single latent file and then decoded into a video. It takes some time, depending on the length and resolution of the latent.\n\nTo use another (e.g. original lipsync) audio for the video, enable and connect the Load Audio node instead of VAE Decode Audio node."
       ],
       "widgets_values_named": {
-        "text": "Select the folder where the latents are stored and they will be merged into a single latent file and then decoded into a video. It takes some time, depending on the length and resolution of the latent."
+        "text": "Select the folder where the latents are stored and they will be merged into a single latent file and then decoded into a video. It takes some time, depending on the length and resolution of the latent.\n\nTo use another (e.g. original lipsync) audio for the video, enable and connect the Load Audio node instead of VAE Decode Audio node."
       },
       "color": "#432",
       "bgcolor": "#653"
+    },
+    {
+      "id": 24,
+      "type": "LoadAudio",
+      "pos": [
+        -991.4982199723191,
+        5245.14310881893
+      ],
+      "size": [
+        282.798828125,
+        136
+      ],
+      "flags": {
+        "collapsed": false
+      },
+      "order": 5,
+      "mode": 4,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "AUDIO",
+          "type": "AUDIO",
+          "links": []
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.42.0",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        },
+        "Node name for S&R": "LoadAudio"
+      },
+      "widgets_values": [
+        "2min_book.mp3",
+        ""
+      ],
+      "widgets_values_named": {
+        "audio": "2min_book.mp3",
+        "upload": ""
+      },
+      "color": "#322",
+      "bgcolor": "#533"
     }
   ],
   "links": [
@@ -589,8 +634,8 @@
       "bounding": [
         -1628.0065089863513,
         4704.354633727287,
-        1741.6847234442102,
-        874.9399901313609
+        1739.046955531946,
+        845.922731774408
       ],
       "color": "#3f789e",
       "flags": {}
@@ -600,14 +645,14 @@
   "extra": {
     "ue_links": [],
     "ds": {
-      "scale": 0.2853116706110125,
+      "scale": 0.5559917313492505,
       "offset": [
-        2697.0394328690977,
-        -3713.269158819171
+        2113.19199527872,
+        -3836.679979183485
       ]
     },
     "links_added_by_ue": [],
-    "frontendVersion": "1.55.18",
+    "frontendVersion": "1.57.1",
     "VHS_latentpreview": true,
     "VHS_latentpreviewrate": 0,
     "VHS_MetadataImage": false,

@@ -1,4 +1,5 @@
-from .shared import CATEGORY, list_head_tail
+from .shared import CATEGORY
+
 
 class MediaSlicer:
 
@@ -9,10 +10,11 @@ class MediaSlicer:
                 "video": ("IMAGE", {}),
                 "audio": ("AUDIO", {}),
             },
-            "required" : {
-                "duration_seconds" : ("FLOAT", { "default" : 0.00, "step": 0.01 }),
-                "video_fps" : ("FLOAT", { "default" : 24.0 }),
-                "take_from" : (["start", "end"], { "default" : "end" }),
+            "required": {
+                "start_offset_seconds": ("FLOAT", {"default": 0.0, "min": 0.0, "max": 3600.0, "step": 0.1}),
+                "end_offset_seconds": ("FLOAT", {"default": 0.0, "min": 0.0, "max": 3600.0, "step": 0.1}),
+                "end_offset_from": (["end", "start"], {"default": "end"}),
+                "video_fps": ("FLOAT", {"default": 24.0, "min": 1.0, "max": 120.0, "step": 1.0}),
             },
         }
 
@@ -23,39 +25,45 @@ class MediaSlicer:
 
     FUNCTION = "run"
     CATEGORY = CATEGORY
-    DESCRIPTION = "Takes a slice with requested length from the start or the end of the loaded media. If using both audio and video, the inputs must be the same length."
+    DESCRIPTION = "Slices video and/or audio between a start offset and an end offset. The end offset is measured from the end by default, or from the start when selected."
 
-    def run(self, duration_seconds, video_fps, take_from, video=None, audio=None):
+    def run(self, start_offset_seconds=0.0, end_offset_seconds=0.0, end_offset_from="end", video_fps=24.0, video=None, audio=None):
         out_images = video
         out_audio = audio
 
-        if duration_seconds < 0.001:
-            return (out_images, out_audio)
-
         if video is not None:
-            frames_to_take = int(duration_seconds * video_fps)
-            out_images = list_head_tail(video, frames_to_take, take_from)
+            total_frames = video.shape[0]
+            start_frame = min(max(int(start_offset_seconds * video_fps), 0), total_frames)
+            if end_offset_from == "start":
+                end_frame = min(max(int(end_offset_seconds * video_fps), 0), total_frames)
+            else:
+                end_frame = min(max(total_frames - int(end_offset_seconds * video_fps), 0), total_frames)
+
+            if start_frame >= end_frame:
+                raise ValueError(
+                    f"MediaSlicer: Calculated start video frame ({start_frame}) is >= "
+                    f"end video frame ({end_frame}) (total video frames: {total_frames})."
+                )
+            out_images = video[start_frame:end_frame]
 
         if audio is not None:
-            # ComfyUI AUDIO structure: {"waveform": tensor(batch, channels, samples), "sample_rate": int}
             waveform = audio["waveform"]
             sample_rate = audio["sample_rate"]
+            total_samples = waveform.shape[-1]
+            start_sample = min(max(int(start_offset_seconds * sample_rate), 0), total_samples)
+            if end_offset_from == "start":
+                end_sample = min(max(int(end_offset_seconds * sample_rate), 0), total_samples)
+            else:
+                end_sample = min(max(total_samples - int(end_offset_seconds * sample_rate), 0), total_samples)
 
-            samples_to_take = int(duration_seconds * sample_rate)
-
-            # permute the waveform to (samples, batch, channels) to slice accordingly.
-            # This handles batch processing "vectorially" - by moving the time dimension to the front,
-            # we can slice the time for all batch items (and channels) simultaneously without a loop.
-            waveform_permuted = waveform.permute(2, 0, 1)
-
-            cut_waveform = list_head_tail(waveform_permuted, samples_to_take, take_from)
-
-            # Restore original shape (batch, channels, samples)
-            new_waveform = cut_waveform.permute(1, 2, 0)
-
+            if start_sample >= end_sample:
+                raise ValueError(
+                    f"MediaSlicer: Calculated start audio sample ({start_sample}) is >= "
+                    f"end audio sample ({end_sample}) (total audio samples: {total_samples})."
+                )
             out_audio = {
-                "waveform": new_waveform,
-                "sample_rate": sample_rate
+                "waveform": waveform[..., start_sample:end_sample],
+                "sample_rate": sample_rate,
             }
 
         return (out_images, out_audio)

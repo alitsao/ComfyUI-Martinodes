@@ -69,7 +69,7 @@ class LatentFolderOverlappingConcatenator:
         folder = s.resolve_folder(folder_path)
         if not os.path.isdir(folder):
             return ""
-        return str([(f, os.path.getmtime(os.path.join(folder, f))) for f in s._list_files(folder)])
+        return str([(f, os.path.getmtime(os.path.join(folder, f))) for f in s.list_files(folder)])
 
 
     def run(self, folder_path, video_fps, overlap_duration_seconds, video_overlap_resolve, audio_overlap_resolve):
