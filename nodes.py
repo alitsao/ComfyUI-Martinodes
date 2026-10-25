@@ -10,7 +10,7 @@ from .martinodes.LatentAVInfo import LatentAVInfo
 from .martinodes.MediaOverlappingConcatenator import MediaOverlappingConcatenator
 from .martinodes.LatentAVMaskedExtender import LatentAVMaskedExtender
 from .martinodes.LatentAVLoadSave import NonePlugger, SaveAVLatent, LoadAVLatent
-from .martinodes.LatentOverlappingConcatenator import LatentOverlappingConcatenator, LatentFolderOverlappingConcatenator
+from .martinodes.LatentOverlappingConcatenator import LatentOverlappingConcatenator, LatentListOverlappingConcatenator
 from .martinodes.LatentAVCombiner import LatentAVCombiner
 from .martinodes.LatentAVSplitter import LatentAVSplitter
 from .martinodes.LatentAVContrast import LatentAVContrast
@@ -38,7 +38,7 @@ NODE_CLASS_MAPPINGS = {
     "MARSaveAVLatent": SaveAVLatent,
     "MARLoadAVLatent": LoadAVLatent,
     "MARLatentOverlappingConcatenator": LatentOverlappingConcatenator,
-    "MARLatentFolderOverlappingConcatenator": LatentFolderOverlappingConcatenator,
+    "MARLatentListOverlappingConcatenator": LatentListOverlappingConcatenator,
     "MARLatentAVCombiner": LatentAVCombiner,
     "MARLatentAVSplitter": LatentAVSplitter,
     "MARLatentAVContrast": LatentAVContrast,
@@ -67,7 +67,7 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "MARSaveAVLatent": "Save video+audio latent",
     "MARLoadAVLatent": "Load video+audio latent",
     "MARLatentOverlappingConcatenator": "Concatenate video+audio latents",
-    "MARLatentFolderOverlappingConcatenator": "Concatenate video+audio latents from folder",
+    "MARLatentListOverlappingConcatenator": "Concatenate video+audio latent list",
     "MARLatentAVCombiner": "Combine video+audio latent",
     "MARLatentAVSplitter": "Split video+audio latent",
     "MARLatentAVContrast": "Adjust video latent contrast",

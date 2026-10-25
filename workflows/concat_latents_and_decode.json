@@ -1,8 +1,8 @@
 {
   "id": "64055d6f-7d5b-4287-a1ef-284ada605a9f",
   "revision": 0,
-  "last_node_id": 25,
-  "last_link_id": 26,
+  "last_node_id": 29,
+  "last_link_id": 29,
   "nodes": [
     {
       "id": 7,
@@ -18,7 +18,7 @@
       "flags": {
         "collapsed": false
       },
-      "order": 7,
+      "order": 10,
       "mode": 0,
       "inputs": [
         {
@@ -68,7 +68,7 @@
       "flags": {
         "collapsed": false
       },
-      "order": 8,
+      "order": 11,
       "mode": 0,
       "inputs": [
         {
@@ -118,7 +118,13 @@
       "flags": {},
       "order": 0,
       "mode": 0,
-      "inputs": [],
+      "inputs": [
+        {
+          "name": "av_latents",
+          "type": "LATENT",
+          "link": null
+        }
+      ],
       "outputs": [
         {
           "name": "VAE",
@@ -215,10 +221,10 @@
       ],
       "size": [
         737.505506146243,
-        685.9554439371914
+        334
       ],
       "flags": {},
-      "order": 9,
+      "order": 12,
       "mode": 0,
       "inputs": [
         {
@@ -267,7 +273,7 @@
       "widgets_values": {
         "frame_rate": 24,
         "loop_count": 0,
-        "filename_prefix": "longtalk/video/h3_joined",
+        "filename_prefix": "longtalk/video/joined",
         "format": "video/h264-mp4",
         "pix_fmt": "yuv420p",
         "crf": 19,
@@ -290,18 +296,18 @@
               "kind": "video",
               "width": 608,
               "height": 352,
-              "duration": 17.916666666666668,
+              "duration": 61.125,
               "fps": 24,
-              "frame_count": 430
+              "frame_count": 1467
             },
-            "id": "a5dabd78-c2ae-4363-8bb6-929f72625eb7"
+            "id": "7b4fdbf7-e2bd-4261-9ac3-183c4808647f"
           }
         }
       },
       "widgets_values_named": {
         "frame_rate": 24,
         "loop_count": 0,
-        "filename_prefix": "longtalk/video/h3_joined",
+        "filename_prefix": "longtalk/video/joined",
         "format": "video/h264-mp4",
         "pix_fmt": "yuv420p",
         "crf": 19,
@@ -324,11 +330,11 @@
               "kind": "video",
               "width": 608,
               "height": 352,
-              "duration": 17.916666666666668,
+              "duration": 61.125,
               "fps": 24,
-              "frame_count": 430
+              "frame_count": 1467
             },
-            "id": "a5dabd78-c2ae-4363-8bb6-929f72625eb7"
+            "id": "7b4fdbf7-e2bd-4261-9ac3-183c4808647f"
           }
         }
       }
@@ -380,15 +386,15 @@
       "id": 21,
       "type": "MARSaveAVLatent",
       "pos": [
-        -1121.9394140078855,
-        4479.6854321227775
+        -801.3114229806164,
+        4495.655408687353
       ],
       "size": [
         348.22265625,
         82
       ],
       "flags": {},
-      "order": 6,
+      "order": 9,
       "mode": 4,
       "inputs": [
         {
@@ -427,19 +433,25 @@
     },
     {
       "id": 22,
-      "type": "MARLatentFolderOverlappingConcatenator",
+      "type": "MARLatentListOverlappingConcatenator",
       "pos": [
-        -1578.8952894405484,
-        4476.239302970646
+        -1179.4003679709813,
+        4497.772882305333
       ],
       "size": [
-        395.43125,
-        154
+        278.21533231513433,
+        142.92448021875225
       ],
       "flags": {},
-      "order": 3,
+      "order": 8,
       "mode": 0,
-      "inputs": [],
+      "inputs": [
+        {
+          "name": "av_latents",
+          "type": "LATENT",
+          "link": 27
+        }
+      ],
       "outputs": [
         {
           "name": "av_latent",
@@ -454,7 +466,7 @@
       "properties": {
         "aux_id": "progmars/ComfyUI-Martinodes",
         "ver": "5accf4e7b2e773358a7f7a65c551c361d3017235",
-        "Node name for S&R": "MARLatentFolderOverlappingConcatenator",
+        "Node name for S&R": "MARLatentListOverlappingConcatenator",
         "ue_properties": {
           "widget_ue_connectable": {},
           "input_ue_unconnectable": {},
@@ -462,14 +474,12 @@
         }
       },
       "widgets_values": [
-        "longtalk/latents",
         24,
         1,
         "crossfade",
         "crossfade"
       ],
       "widgets_values_named": {
-        "folder_path": "longtalk/latents",
         "video_fps": 24,
         "overlap_duration_seconds": 1,
         "video_overlap_resolve": "crossfade",
@@ -490,7 +500,7 @@
         88
       ],
       "flags": {},
-      "order": 4,
+      "order": 3,
       "mode": 0,
       "inputs": [],
       "outputs": [],
@@ -525,7 +535,7 @@
       "flags": {
         "collapsed": false
       },
-      "order": 5,
+      "order": 4,
       "mode": 4,
       "inputs": [],
       "outputs": [
@@ -538,12 +548,12 @@
       "properties": {
         "cnr_id": "comfy-core",
         "ver": "0.42.0",
+        "Node name for S&R": "LoadAudio",
         "ue_properties": {
           "widget_ue_connectable": {},
           "input_ue_unconnectable": {},
           "version": "7.8"
-        },
-        "Node name for S&R": "LoadAudio"
+        }
       },
       "widgets_values": [
         "2min_book.mp3",
@@ -555,6 +565,161 @@
       },
       "color": "#322",
       "bgcolor": "#533"
+    },
+    {
+      "id": 26,
+      "type": "MARFileLister",
+      "pos": [
+        -1577.5516250788705,
+        4530.522618198997
+      ],
+      "size": [
+        270,
+        102
+      ],
+      "flags": {},
+      "order": 5,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "filepaths",
+          "shape": 6,
+          "type": "STRING",
+          "links": [
+            28
+          ]
+        },
+        {
+          "name": "list_length",
+          "type": "INT",
+          "links": null
+        }
+      ],
+      "properties": {
+        "aux_id": "progmars/ComfyUI-Martinodes",
+        "ver": "3b0c6cb94b4b3001a5d418bac193d922d86e9dbe",
+        "Node name for S&R": "MARFileLister",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "widgets_values": [
+        "longtalk/latents",
+        0
+      ],
+      "widgets_values_named": {
+        "input_path": "longtalk/latents",
+        "refresh_trigger": 0
+      },
+      "color": "#322",
+      "bgcolor": "#533"
+    },
+    {
+      "id": 28,
+      "type": "MARLoadAVLatent",
+      "pos": [
+        -1197.1670400702028,
+        4451.175931632627
+      ],
+      "size": [
+        270,
+        82
+      ],
+      "flags": {
+        "collapsed": true
+      },
+      "order": 7,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "file_select",
+          "type": "COMBO",
+          "widget": {
+            "name": "file_select"
+          },
+          "link": 29
+        },
+        {
+          "name": "file_path",
+          "shape": 7,
+          "type": "STRING",
+          "widget": {
+            "name": "file_path"
+          },
+          "link": 28
+        }
+      ],
+      "outputs": [
+        {
+          "name": "av_latent",
+          "type": "LATENT",
+          "links": [
+            27
+          ]
+        }
+      ],
+      "properties": {
+        "aux_id": "progmars/ComfyUI-Martinodes",
+        "ver": "3b0c6cb94b4b3001a5d418bac193d922d86e9dbe",
+        "Node name for S&R": "MARLoadAVLatent",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "widgets_values": [
+        "longtalk/latents/h3_00057.avlatent",
+        ""
+      ],
+      "widgets_values_named": {
+        "file_select": "longtalk/latents/h3_00057.avlatent",
+        "file_path": ""
+      },
+      "color": "#232",
+      "bgcolor": "#353"
+    },
+    {
+      "id": 29,
+      "type": "MARNonePlugger",
+      "pos": [
+        -1358.9685288098156,
+        4451.536854752108
+      ],
+      "size": [
+        140,
+        26
+      ],
+      "flags": {
+        "collapsed": true
+      },
+      "order": 6,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "any",
+          "type": "*",
+          "links": [
+            29
+          ]
+        }
+      ],
+      "properties": {
+        "aux_id": "progmars/ComfyUI-Martinodes",
+        "ver": "3b0c6cb94b4b3001a5d418bac193d922d86e9dbe",
+        "Node name for S&R": "MARNonePlugger",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "color": "#232",
+      "bgcolor": "#353"
     }
   ],
   "links": [
@@ -613,6 +778,30 @@
       8,
       0,
       "LATENT"
+    ],
+    [
+      27,
+      28,
+      0,
+      22,
+      0,
+      "LATENT"
+    ],
+    [
+      28,
+      26,
+      0,
+      28,
+      1,
+      "STRING"
+    ],
+    [
+      29,
+      29,
+      0,
+      28,
+      0,
+      "COMBO"
     ]
   ],
   "groups": [
@@ -622,8 +811,8 @@
       "bounding": [
         -1603.5363788387876,
         4378.823763833112,
-        862.1688756057239,
-        274.5388482352855
+        1206.1376016119893,
+        283.13806638544247
       ],
       "color": "#3f789e",
       "flags": {}
@@ -634,8 +823,8 @@
       "bounding": [
         -1628.0065089863513,
         4704.354633727287,
-        1739.046955531946,
-        845.922731774408
+        1728.1654987424392,
+        737.1081638793394
       ],
       "color": "#3f789e",
       "flags": {}
@@ -645,10 +834,10 @@
   "extra": {
     "ue_links": [],
     "ds": {
-      "scale": 0.5559917313492505,
+      "scale": 0.8140274938684418,
       "offset": [
-        2113.19199527872,
-        -3836.679979183485
+        1348.7917240103895,
+        -4746.43381983714
       ]
     },
     "links_added_by_ue": [],

@@ -16,9 +16,9 @@ class FileLister:
             }
         }
 
-    RETURN_TYPES = ("STRING",)
-    RETURN_NAMES = ("filepaths",)
-    OUTPUT_IS_LIST = (True,)
+    RETURN_TYPES = ("STRING", "INT")
+    RETURN_NAMES = ("filepaths", "list_length")
+    OUTPUT_IS_LIST = (True, False)
     FUNCTION = "run"
     CATEGORY = CATEGORY
     DESCRIPTION = "Lists files in a folder in ascending filepath order."
@@ -68,4 +68,5 @@ class FileLister:
 
     def run(self, input_path, refresh_trigger=0):
         folder = self.resolve_folder(input_path)
-        return (self.list_files(folder),)
+        filepaths = self.list_files(folder)
+        return (filepaths, len(filepaths))

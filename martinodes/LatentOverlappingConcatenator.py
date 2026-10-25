@@ -1,14 +1,9 @@
-import os
 import torch
-import folder_paths
 from .shared import CATEGORY, MINIMAX_H3_PARAMS
 from .latentops import align_duration_to_tokens
-from .LatentAVLoadSave import LoadAVLatent
 
 
 class LatentOverlappingConcatenator:
-    def __init__(self):
-        pass
 
     @classmethod
     def INPUT_TYPES(s):
@@ -39,15 +34,16 @@ class LatentOverlappingConcatenator:
         return (out_av, )
 
 
-class LatentFolderOverlappingConcatenator:
+class LatentListOverlappingConcatenator:
     # Maps UI options to the pairwise resolve names used by concat_av_latents
     RESOLVE_MAP = {"previous": "av_latent_1", "next": "av_latent_2", "crossfade": "crossfade"}
+    INPUT_IS_LIST = True
 
     @classmethod
     def INPUT_TYPES(s):
         return {
             "required": {
-                "folder_path": ("STRING", {"default": "av_latents"}),
+                "av_latents": ("LATENT", {}),
                 "video_fps": ("FLOAT", {"default": 24.0, "min": 1.0, "max": 120.0, "step": 1.0}),
                 "overlap_duration_seconds": ("FLOAT", {"default": 0.0, "min": 0.0, "max": 60.0, "step": 0.1}),
                 "video_overlap_resolve": (["previous", "next", "crossfade"], {"default": "crossfade"}),
@@ -58,54 +54,45 @@ class LatentFolderOverlappingConcatenator:
     RETURN_TYPES = ("LATENT", )
     RETURN_NAMES = ("av_latent", )
 
-    SEARCH_ALIASES = ["concatenate latent folder", "join av latents folder", "concatenate avlatent files"]
+    SEARCH_ALIASES = ["concatenate latent list", "join av latents", "concatenate video audio latent list"]
 
     FUNCTION = "run"
     CATEGORY = CATEGORY
-    DESCRIPTION = "Concatenates all .avlatent files in a folder (ascending name order), applying overlapping logic. Relative paths are resolved against the ComfyUI output directory."
+    DESCRIPTION = "Concatenates a list of video+audio latents, applying overlapping logic in list order."
 
-    @classmethod
-    def IS_CHANGED(s, folder_path, **kwargs):
-        folder = s.resolve_folder(folder_path)
-        if not os.path.isdir(folder):
-            return ""
-        return str([(f, os.path.getmtime(os.path.join(folder, f))) for f in s.list_files(folder)])
-
-
-    def run(self, folder_path, video_fps, overlap_duration_seconds, video_overlap_resolve, audio_overlap_resolve):
-        folder = self.resolve_folder(folder_path)
-        if not os.path.isdir(folder):
-            raise FileNotFoundError(f"LatentFolderOverlappingConcatenator: Folder not found: '{folder}'")
-
-        files = self.list_files(folder)
-        if not files:
-            raise FileNotFoundError(f"LatentFolderOverlappingConcatenator: No .avlatent files in '{folder}'")
+    def run(self, av_latents, video_fps, overlap_duration_seconds, video_overlap_resolve, audio_overlap_resolve):
+        video_fps = video_fps[0] if isinstance(video_fps, list) else video_fps
+        overlap_duration_seconds = (
+            overlap_duration_seconds[0]
+            if isinstance(overlap_duration_seconds, list)
+            else overlap_duration_seconds
+        )
+        video_overlap_resolve = (
+            video_overlap_resolve[0]
+            if isinstance(video_overlap_resolve, list)
+            else video_overlap_resolve
+        )
+        audio_overlap_resolve = (
+            audio_overlap_resolve[0]
+            if isinstance(audio_overlap_resolve, list)
+            else audio_overlap_resolve
+        )
+        if not av_latents:
+            return (None, )
 
         video_resolve = self.RESOLVE_MAP[video_overlap_resolve]
         audio_resolve = self.RESOLVE_MAP[audio_overlap_resolve]
-        loader = LoadAVLatent()
-
-        out_av = None
-        for f in files:
-            (av_latent, ) = loader.load(None, os.path.join(folder, f))
-            if av_latent is None:
-                raise RuntimeError(f"LatentFolderOverlappingConcatenator: Failed to load '{f}'")
-            out_av = concat_av_latents(video_fps, overlap_duration_seconds, video_resolve, audio_resolve, av_latent_1=out_av, av_latent_2=av_latent)
-
+        out_av = av_latents[0]
+        for av_latent in av_latents[1:]:
+            out_av = concat_av_latents(
+                video_fps,
+                overlap_duration_seconds,
+                video_resolve,
+                audio_resolve,
+                av_latent_1=out_av,
+                av_latent_2=av_latent,
+            )
         return (out_av, )
-
-
-    @staticmethod
-    def resolve_folder(folder_path):
-        folder_path = folder_path.strip()
-        if os.path.isabs(folder_path):
-            return folder_path
-        return os.path.join(folder_paths.get_output_directory(), folder_path)
-
-
-    @staticmethod
-    def list_files(folder):
-        return sorted(f for f in os.listdir(folder) if f.lower().endswith(".avlatent") and os.path.isfile(os.path.join(folder, f)))
 
 
 

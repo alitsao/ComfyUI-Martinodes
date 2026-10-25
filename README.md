@@ -45,12 +45,12 @@ Loads audio file from the given path.
 Lists all files directly in a folder in ascending filepath order. Subfolders are not scanned. Absolute paths are used as-is; relative paths are resolved against the ComfyUI output directory first, then the input directory.
 
 - **Inputs**: `input_path`: Absolute folder path or path relative to the ComfyUI output/input directory.
-- **Outputs**: A ComfyUI list of absolute filepaths (`STRING`).
+- **Outputs**: A ComfyUI list of absolute filepaths (`STRING`) and `list_length` (`INT`), the number of files found.
 
 ### Pick random batch item (BatchRandomPicker)
-Selects a random batch item deterministically using the seed from a NOISE input. The same seed and batch size select the same item.
+Selects a random batch item deterministically using the seed from a NOISE input. The same seed, batch size, and weights select the same item. The optional `weights` input accepts one comma-separated non-negative number per item; leave it blank for uniform selection. Weights are relative, so `1,1,1,1,2,1` makes item #5 twice as likely as an item with weight `1`.
 
-- **Inputs**: `noise` (`NOISE`), `any_batch` (any type)
+- **Inputs**: `noise` (`NOISE`), `any_batch` (any type), `weights` (comma-separated numbers)
 - **Output**: The selected item, retaining its original type.
 
 ### Pick first or last batch item (BatchBoundPicker)
@@ -132,23 +132,23 @@ The requested overlap duration is snapped to latent token counts using the same 
   - `audio_overlap_resolve`: How to handle the audio overlap ("crossfade", "av_latent_1", "av_latent_2").
 - **Outputs**: `av_latent`
 
-### Concatenate video+audio latents from folder (LatentFolderOverlappingConcatenator)
-Concatenates all video+audio latents in the given folder, applying overlapping logic (crossfade or simple join) similar to Concatenate media, but operating directly on latents instead of decoded video/audio.
+### Concatenate video+audio latent list (LatentListOverlappingConcatenator)
+Concatenates a list of video+audio latents in input order, applying overlapping logic (crossfade or simple join) similar to Concatenate media, but operating directly on latents instead of decoded video/audio.
 
 Currently supports MiniMax H3 only, but was developed with separated configurable parameters to port to other models if needed.
 
 The requested overlap duration is snapped to latent token counts using the same temporal compression rules as LatentAVMaskedExtender, so overlaps stay aligned with the model's token grid.
 
-- **Inputs**: `folder_path`: The path to scan for .avlatent files in ascending order
+- **Inputs**: `av_latents`: A ComfyUI list of video+audio latents
 - **Parameters**: 
   - `video_fps`: Frame rate used to calculate synchronized video and audio token lengths.
   - `overlap_duration_seconds`: Duration of the overlap/crossfade. `0` performs a plain concatenation.
-  - `video_overlap_resolve`: How to handle the video overlap ("crossfade", "av_latent_1", "av_latent_2").
-  - `audio_overlap_resolve`: How to handle the audio overlap ("crossfade", "av_latent_1", "av_latent_2").
+  - `video_overlap_resolve`: How to handle the video overlap ("crossfade", "previous", "next").
+  - `audio_overlap_resolve`: How to handle the audio overlap ("crossfade", "previous", "next").
 - **Outputs**: `av_latent`
 
 ### Extend video+audio latent (LatentAVMaskedExtender)
-Extends a combined video+audio latent by using the requested duration from the head (prepend_head mode) or tail (extend_tail mode) of a loaded latent and using the remaining portion of an empty latent for generation.
+Extends a combined video+audio latent by overlapping a selected end of a loaded latent with the target latent. `extend_tail` and `extend_head` place the loaded overlap before the target remainder; `prepend_head` and `prepend_tail` place the target remainder before the loaded overlap.
 
 Currently supports MiniMax H3 only, but was developed with separated configurable parameters to port to other models if needed.
 
@@ -162,7 +162,7 @@ The implementation requires the latest ComfyUI with [native masking PR 15375](ht
   - `target_av_latent`: The latent prepared by default ComfyUI workflows before passing it to a sampler.
   - `extendable_latent`: (optional) The latent to use for continuing / prepending.
 - **Parameters**:
-  - `mode`: extend_tail (default to continue the `extendable_latent`) or prepend_head
+  - `mode`: `extend_tail` (default), `extend_head`, `prepend_head`, or `prepend_tail`. The suffix names select the tail or head of the loaded latent to preserve; `extend_*` keeps that overlap at the start of the output, while `prepend_*` keeps it at the end.
   - `overlap_duration_seconds`: Duration of the loaded video head/tail to preserve. The part will be overlapped onto the end/beginning of the target_av latent, thus total length of the video will not be changed.
   - `video_fps`: Frame rate used to calculate synchronized video and audio token lengths.
   - `video_mask_fade_seconds` and `audio_mask_fade_seconds`:  Try 0 first, as it seems the most stable. Larger values, although soften transitions and reduce occasional hard scene cuts, might introduce artifacts. Higher values of 0.5 or more might be needed for `prepend_head` mode. Use 0 for single frame image latents.

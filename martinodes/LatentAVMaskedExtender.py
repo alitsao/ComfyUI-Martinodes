@@ -11,7 +11,7 @@ class LatentAVMaskedExtender:
         return {
             "required": {
                 "target_av_latent": ("LATENT", ),
-                "mode": (["extend_tail", "prepend_head"], {"default": "extend_tail"}),
+                "mode": (["extend_tail", "extend_head", "prepend_head", "prepend_tail"], {"default": "extend_tail"}),
                 "overlap_duration_seconds": ("FLOAT", {"default": 1.0, "min": 0.1, "max": 60.0, "step": 0.1}),
                 "video_fps": ("FLOAT", {"default": 24.0, "min": 1.0, "max": 120.0, "step": 1.0}),
                 "video_mask_fade_seconds": ("FLOAT", {"default": 0.0, "min": 0.0, "max": 60.0, "step": 0.1}),
@@ -84,6 +84,7 @@ class LatentAVMaskedExtender:
         height, width = video_tensor.shape[-2:]
         video_overlap_tokens = min(video_overlap_tokens, video_length)
         video_fade_tokens = min(video_fade_tokens, video_overlap_tokens)
+        is_prepend = mode.startswith("prepend_")
 
         mask_min = 0.0
         mask_max = 1.0
@@ -91,7 +92,7 @@ class LatentAVMaskedExtender:
             (video_length, height, width), dtype=torch.float32, device=video_tensor.device
         )
 
-        if mode == "extend_tail":
+        if not is_prepend:
             if video_overlap_tokens > video_fade_tokens:
                 mask_v[:video_overlap_tokens - video_fade_tokens] = mask_min
             if video_fade_tokens > 0:
@@ -126,7 +127,7 @@ class LatentAVMaskedExtender:
             dtype=torch.float32,
             device=audio_tensor.device
         )
-        if mode == "extend_tail":
+        if not is_prepend:
             if audio_overlap_tokens > audio_fade_tokens:
                 mask_a[:, :, :audio_overlap_tokens - audio_fade_tokens] = mask_min
             if audio_fade_tokens > 0:
@@ -256,6 +257,8 @@ class LatentAVMaskedExtender:
         t_dim_v = 2 if dims_v >= 3 else 0
         dims_a = len(old_audio_tensor.shape)
         t_dim_a = -1
+        is_prepend = mode.startswith("prepend_")
+        use_tail = mode.endswith("_tail")
 
         # ==========================================
         # 1. FREEZE FRAME DETECTION & REMOVAL
@@ -313,14 +316,18 @@ class LatentAVMaskedExtender:
         idx_overlap_old_v = [slice(None)] * dims_v
         idx_rem_new_v = [slice(None)] * dims_v
 
-        if mode == "extend_tail":
-            idx_overlap_old_v[t_dim_v] = slice(-video_overlap_tokens, None) if video_overlap_tokens > 0 else slice(0, 0)
+        if not is_prepend:
+            idx_overlap_old_v[t_dim_v] = (
+                slice(-video_overlap_tokens, None) if video_overlap_tokens > 0 else slice(0, 0)
+            ) if use_tail else slice(None, video_overlap_tokens)
             idx_rem_new_v[t_dim_v] = slice(video_overlap_tokens, None)
             overlap_v = old_video_tensor[tuple(idx_overlap_old_v)]
             rem_v = new_video_tensor[tuple(idx_rem_new_v)]
             combined_v = torch.cat((overlap_v, rem_v), dim=t_dim_v)
-        else: # prepend_head
-            idx_overlap_old_v[t_dim_v] = slice(None, video_overlap_tokens) if video_overlap_tokens > 0 else slice(0, 0)
+        else:
+            idx_overlap_old_v[t_dim_v] = (
+                slice(-video_overlap_tokens, None) if video_overlap_tokens > 0 else slice(0, 0)
+            ) if use_tail else slice(None, video_overlap_tokens)
             idx_rem_new_v[t_dim_v] = slice(None, -video_overlap_tokens) if video_overlap_tokens > 0 else slice(None)
             overlap_v = old_video_tensor[tuple(idx_overlap_old_v)]
             rem_v = new_video_tensor[tuple(idx_rem_new_v)]
@@ -342,7 +349,7 @@ class LatentAVMaskedExtender:
         # 0 - keep the original latent
         # 1 - regenerate with new data
 
-        if mode == "extend_tail":
+        if not is_prepend:
             if video_overlap_tokens > video_fade_tokens:
                 # keep all by default
                 mask_v[:(video_overlap_tokens - video_fade_tokens), :, :] = mask_min
@@ -368,14 +375,18 @@ class LatentAVMaskedExtender:
         idx_overlap_old_a = [slice(None)] * dims_a
         idx_rem_new_a = [slice(None)] * dims_a
 
-        if mode == "extend_tail":
-            idx_overlap_old_a[t_dim_a] = slice(-audio_overlap_tokens, None) if audio_overlap_tokens > 0 else slice(0, 0)
+        if not is_prepend:
+            idx_overlap_old_a[t_dim_a] = (
+                slice(-audio_overlap_tokens, None) if audio_overlap_tokens > 0 else slice(0, 0)
+            ) if use_tail else slice(None, audio_overlap_tokens)
             idx_rem_new_a[t_dim_a] = slice(audio_overlap_tokens, None)
             overlap_a = old_audio_tensor[tuple(idx_overlap_old_a)]
             rem_a = new_audio_tensor[tuple(idx_rem_new_a)]
             combined_a = torch.cat((overlap_a, rem_a), dim=t_dim_a)
-        else: # prepend_head
-            idx_overlap_old_a[t_dim_a] = slice(None, audio_overlap_tokens) if audio_overlap_tokens > 0 else slice(0, 0)
+        else:
+            idx_overlap_old_a[t_dim_a] = (
+                slice(-audio_overlap_tokens, None) if audio_overlap_tokens > 0 else slice(0, 0)
+            ) if use_tail else slice(None, audio_overlap_tokens)
             idx_rem_new_a[t_dim_a] = slice(None, -audio_overlap_tokens) if audio_overlap_tokens > 0 else slice(None)
             overlap_a = old_audio_tensor[tuple(idx_overlap_old_a)]
             rem_a = new_audio_tensor[tuple(idx_rem_new_a)]
@@ -388,7 +399,7 @@ class LatentAVMaskedExtender:
         mask_a = torch.ones((B_a, Freq_a, Time_a), dtype=torch.float32, device=combined_a.device)
         audio_fade_tokens = min(audio_fade_tokens, audio_overlap_tokens)
         
-        if mode == "extend_tail":
+        if not is_prepend:
             if audio_overlap_tokens > audio_fade_tokens:
                 # keep all by default
                 mask_a[:, :, :(audio_overlap_tokens - audio_fade_tokens)] = mask_min
