@@ -2633,7 +2633,7 @@
       ],
       "size": [
         452.2406769985008,
-        393.9942627683082
+        372.9363836324838
       ],
       "flags": {},
       "order": 98,
@@ -4160,8 +4160,8 @@
         2615.5742856298357
       ],
       "size": [
-        745.0570941201833,
-        548.379999572715
+        763.4839901562312,
+        565.5784358730261
       ],
       "flags": {},
       "order": 36,
@@ -4177,10 +4177,10 @@
         }
       },
       "widgets_values": [
-        "## Settings\n\nLoad the audio. Choose the desired resolution, steps (20 is the usual optimum) and clip length. Shorter clips will generate a lot faster but will repeat the anchor frames more often.\n\nEnter desired project folder where generated latents and video files will be saved (output/longtalk by default).\n\nIMPORTANT: \n- Always remove all files from the project folder to avoid mixed up latent/video links and to reset workflow loop logic. The number of files is being used as loop index for audio clip extraction.\n\nThe workflow uses a hacky custom node for workflow retriggering, because for longer audios or smaller clip length, ComfyUI native Start Loop / End Loop was slow to start because of heavy cache calculations. For example, if the audio is split into 100 segments, Start Loop may take 5 minutes to prepare the cache. Still, if you want to try it or if ComfyUI fixes the performance issues, the native looping workflow is available in minimax_h3_long_lipsync_looped.json.\n\n\n## Anchor frames\n\nAdd at least one frame that will serve as a quality anchor for the model to strive for. Otherwise, the quality will degrade with every next video. The best frame for a talking video is the character with mouth closed or slightly open. For more natural flow, use an image editing model to create more variations of poses and facial expressions. Make sure to keep the background consistent - even slight brightness variations may confuse the model and lead to occasional flickering in the generated clips. Add the anchors in the image loaders of the \"Random anchor frame selector\" group, and the random picker node will pass one of those images as the last frame of the clip. To make some images appear less often, adjust the weights parameter entering comma-separated weight numbers for the items (e.g. item with weight 1 will be picked less often than item with weight 2).\n\nUse reference images as usual and adjust the prompt to your needs.\nIf Fantastic H3 Media Loader UI collapses, switch to another workflow and then back. It's a known ComfyUI bug waiting for a fix, see [#15331](https://github.com/Comfy-Org/ComfyUI_frontend/pull/15331).\n\n## Outputs\n\nThe final video is saved in project folder, video subfolder. To avoid audio VAE recoding artifacts, the original audio is added to the final video. To save every clip (will be slower), enable the \"Decode clip video\" group. All the generated latents are saved in the project's latents subfolder for later editing and rejoining, if needed. You can assemble them also separately using concat_latents_and_decode.json workflow. Remove them when generating a new project.\n\n## Regenerating a clip\n\nIf you want to regenerate one of the lipsync clips and preserve smooth transitions from the previous and next clips, find the corresponding latent by time. You can find the latent from the file name of the latent you want to regenerate (e.g. clip_n_00003_t_12s_00001.avlatent contains the video after 12 seconds). Use retake_longtalk_latent_part.json workflow to regenerate it. After generating the new latent and reviewing it, delete the old latent and rename the new latent to match the old latent's name. Then use concat_latents_and_decode.json workflow to assemble the final video (or use your video editor with the regenerated clip)."
+        "## Settings\n\nLoad the audio. Choose the desired resolution, steps (20 is the usual optimum) and clip length. Shorter clips will generate a lot faster but will repeat the anchor frames more often.\n\nEnter desired project folder where generated latents and video files will be saved (output/longtalk by default).\n\nIMPORTANT: \n- Always remove all files from the project folder to avoid mixed up latent/video links and to reset workflow loop logic. The number of files is being used as loop index for audio clip extraction.\n- If you keep old latents in the project folder latent subfolder, the workflow will continue generating from the last latent and then finally join the videos, when the input audio is exhausted. Thus it is possible to easily recover from an interrupted generation.\n- Do not switch workflow tabs while generating.\n\nThe workflow uses a hacky custom node for workflow retriggering. Another option was to use ComfyUI native Start Loop / End Loop, but it is slow to start because of heavy cache calculations. For example, if the audio is split into 100 segments, Start Loop may take 5 minutes to prepare the cache. Still, if you want to try it or if ComfyUI fixes the performance issues, the native looping workflow is available in minimax_h3_long_lipsync_looped.json.\n\n\n## Anchor frames\n\nAdd at least one frame that will serve as a quality anchor for the model to strive for. Otherwise, the quality will degrade with every next video. The best frame for a talking video is the character with mouth closed or slightly open. For more natural flow, use an image editing model to create more variations of poses and facial expressions. Make sure to keep the background consistent - even slight brightness variations may confuse the model and lead to occasional flickering in the generated clips. Add the anchors in the image loaders of the \"Random anchor frame selector\" group, and the random picker node will pass one of those images as the last frame of the clip. To make some images appear less often, adjust the weights parameter entering comma-separated weight numbers for the items (e.g. item with weight 1 will be picked less often than item with weight 2).\n\nUse reference images as usual and adjust the prompt to your needs.\nIf Fantastic H3 Media Loader UI collapses, switch to another workflow and then back. It's a known ComfyUI bug waiting for a fix, see [#15331](https://github.com/Comfy-Org/ComfyUI_frontend/pull/15331).\n\n## Outputs\n\nThe final video is saved in project folder, video subfolder. To avoid audio VAE recoding artifacts, the original audio is added to the final video. To save every clip (will be slower), enable the \"Decode clip video\" group. All the generated latents are saved in the project's latents subfolder for later editing and rejoining, if needed. You can assemble them also separately using concat_latents_and_decode.json workflow. Remove them when generating a new project.\n\n## Regenerating a clip\n\nIf you want to regenerate one of the lipsync clips and preserve smooth transitions from the previous and next clips, find the corresponding latent by time. You can find the latent from the file name of the latent you want to regenerate (e.g. clip_n_00003_t_12s_00001.avlatent contains the video after 12 seconds). Use retake_longtalk_latent_part.json workflow to regenerate it. After generating the new latent and reviewing it, delete the old latent and rename the new latent to match the old latent's name. Then use concat_latents_and_decode.json workflow to assemble the final video (or use your video editor with the regenerated clip)."
       ],
       "widgets_values_named": {
-        "text": "## Settings\n\nLoad the audio. Choose the desired resolution, steps (20 is the usual optimum) and clip length. Shorter clips will generate a lot faster but will repeat the anchor frames more often.\n\nEnter desired project folder where generated latents and video files will be saved (output/longtalk by default).\n\nIMPORTANT: \n- Always remove all files from the project folder to avoid mixed up latent/video links and to reset workflow loop logic. The number of files is being used as loop index for audio clip extraction.\n\nThe workflow uses a hacky custom node for workflow retriggering, because for longer audios or smaller clip length, ComfyUI native Start Loop / End Loop was slow to start because of heavy cache calculations. For example, if the audio is split into 100 segments, Start Loop may take 5 minutes to prepare the cache. Still, if you want to try it or if ComfyUI fixes the performance issues, the native looping workflow is available in minimax_h3_long_lipsync_looped.json.\n\n\n## Anchor frames\n\nAdd at least one frame that will serve as a quality anchor for the model to strive for. Otherwise, the quality will degrade with every next video. The best frame for a talking video is the character with mouth closed or slightly open. For more natural flow, use an image editing model to create more variations of poses and facial expressions. Make sure to keep the background consistent - even slight brightness variations may confuse the model and lead to occasional flickering in the generated clips. Add the anchors in the image loaders of the \"Random anchor frame selector\" group, and the random picker node will pass one of those images as the last frame of the clip. To make some images appear less often, adjust the weights parameter entering comma-separated weight numbers for the items (e.g. item with weight 1 will be picked less often than item with weight 2).\n\nUse reference images as usual and adjust the prompt to your needs.\nIf Fantastic H3 Media Loader UI collapses, switch to another workflow and then back. It's a known ComfyUI bug waiting for a fix, see [#15331](https://github.com/Comfy-Org/ComfyUI_frontend/pull/15331).\n\n## Outputs\n\nThe final video is saved in project folder, video subfolder. To avoid audio VAE recoding artifacts, the original audio is added to the final video. To save every clip (will be slower), enable the \"Decode clip video\" group. All the generated latents are saved in the project's latents subfolder for later editing and rejoining, if needed. You can assemble them also separately using concat_latents_and_decode.json workflow. Remove them when generating a new project.\n\n## Regenerating a clip\n\nIf you want to regenerate one of the lipsync clips and preserve smooth transitions from the previous and next clips, find the corresponding latent by time. You can find the latent from the file name of the latent you want to regenerate (e.g. clip_n_00003_t_12s_00001.avlatent contains the video after 12 seconds). Use retake_longtalk_latent_part.json workflow to regenerate it. After generating the new latent and reviewing it, delete the old latent and rename the new latent to match the old latent's name. Then use concat_latents_and_decode.json workflow to assemble the final video (or use your video editor with the regenerated clip)."
+        "text": "## Settings\n\nLoad the audio. Choose the desired resolution, steps (20 is the usual optimum) and clip length. Shorter clips will generate a lot faster but will repeat the anchor frames more often.\n\nEnter desired project folder where generated latents and video files will be saved (output/longtalk by default).\n\nIMPORTANT: \n- Always remove all files from the project folder to avoid mixed up latent/video links and to reset workflow loop logic. The number of files is being used as loop index for audio clip extraction.\n- If you keep old latents in the project folder latent subfolder, the workflow will continue generating from the last latent and then finally join the videos, when the input audio is exhausted. Thus it is possible to easily recover from an interrupted generation.\n- Do not switch workflow tabs while generating.\n\nThe workflow uses a hacky custom node for workflow retriggering. Another option was to use ComfyUI native Start Loop / End Loop, but it is slow to start because of heavy cache calculations. For example, if the audio is split into 100 segments, Start Loop may take 5 minutes to prepare the cache. Still, if you want to try it or if ComfyUI fixes the performance issues, the native looping workflow is available in minimax_h3_long_lipsync_looped.json.\n\n\n## Anchor frames\n\nAdd at least one frame that will serve as a quality anchor for the model to strive for. Otherwise, the quality will degrade with every next video. The best frame for a talking video is the character with mouth closed or slightly open. For more natural flow, use an image editing model to create more variations of poses and facial expressions. Make sure to keep the background consistent - even slight brightness variations may confuse the model and lead to occasional flickering in the generated clips. Add the anchors in the image loaders of the \"Random anchor frame selector\" group, and the random picker node will pass one of those images as the last frame of the clip. To make some images appear less often, adjust the weights parameter entering comma-separated weight numbers for the items (e.g. item with weight 1 will be picked less often than item with weight 2).\n\nUse reference images as usual and adjust the prompt to your needs.\nIf Fantastic H3 Media Loader UI collapses, switch to another workflow and then back. It's a known ComfyUI bug waiting for a fix, see [#15331](https://github.com/Comfy-Org/ComfyUI_frontend/pull/15331).\n\n## Outputs\n\nThe final video is saved in project folder, video subfolder. To avoid audio VAE recoding artifacts, the original audio is added to the final video. To save every clip (will be slower), enable the \"Decode clip video\" group. All the generated latents are saved in the project's latents subfolder for later editing and rejoining, if needed. You can assemble them also separately using concat_latents_and_decode.json workflow. Remove them when generating a new project.\n\n## Regenerating a clip\n\nIf you want to regenerate one of the lipsync clips and preserve smooth transitions from the previous and next clips, find the corresponding latent by time. You can find the latent from the file name of the latent you want to regenerate (e.g. clip_n_00003_t_12s_00001.avlatent contains the video after 12 seconds). Use retake_longtalk_latent_part.json workflow to regenerate it. After generating the new latent and reviewing it, delete the old latent and rename the new latent to match the old latent's name. Then use concat_latents_and_decode.json workflow to assemble the final video (or use your video editor with the regenerated clip)."
       },
       "color": "#432",
       "bgcolor": "#653"
@@ -4339,7 +4339,7 @@
       ],
       "flags": {},
       "order": 146,
-      "mode": 4,
+      "mode": 0,
       "inputs": [
         {
           "name": "model",
@@ -5405,11 +5405,11 @@
         }
       },
       "widgets_values": [
-        "2min_book.mp3",
+        "introed_5min_book.mp3",
         ""
       ],
       "widgets_values_named": {
-        "audio": "2min_book.mp3",
+        "audio": "introed_5min_book.mp3",
         "upload": ""
       },
       "color": "#322",
@@ -6480,11 +6480,11 @@
         }
       },
       "widgets_values": [
-        499097035155919,
+        251566632988484,
         "randomize"
       ],
       "widgets_values_named": {
-        "noise_seed": 499097035155919,
+        "noise_seed": 251566632988484,
         "control_after_generate": "randomize"
       }
     },
@@ -6492,8 +6492,8 @@
       "id": 660,
       "type": "GetItemFromList",
       "pos": [
-        -641.2370523123382,
-        4134.427085836405
+        -636.9661954169783,
+        4135.804244757365
       ],
       "size": [
         270,
@@ -7150,7 +7150,7 @@
       ],
       "size": [
         896.1405359607543,
-        887.1634067450796
+        844.4796370444274
       ],
       "flags": {},
       "order": 161,
@@ -7220,22 +7220,22 @@
           "hidden": false,
           "paused": false,
           "params": {
-            "filename": "genaud_joined_00001-audio.mp4",
+            "filename": "joined_00008-audio.mp4",
             "subfolder": "longtalk\\video",
             "type": "output",
             "format": "video/h264-mp4",
             "frame_rate": 24,
-            "workflow": "genaud_joined_00001.png",
-            "fullpath": "D:\\GAN\\Comfy\\ComfyUI\\output\\longtalk\\video\\genaud_joined_00001-audio.mp4",
+            "workflow": "joined_00008.png",
+            "fullpath": "D:\\GAN\\Comfy\\ComfyUI\\output\\longtalk\\video\\joined_00008-audio.mp4",
             "metadata": {
               "kind": "video",
-              "width": 416,
-              "height": 256,
-              "duration": 125.58333333333333,
+              "width": 960,
+              "height": 544,
+              "duration": 312.5833333333333,
               "fps": 24,
-              "frame_count": 3014
+              "frame_count": 7502
             },
-            "id": "cbf14ed0-5753-44e4-80c3-ee73e9918acb"
+            "id": "1f7a4ec8-0373-4f89-a4bd-e1102ea574f8"
           }
         }
       },
@@ -7254,22 +7254,22 @@
           "hidden": false,
           "paused": false,
           "params": {
-            "filename": "genaud_joined_00001-audio.mp4",
+            "filename": "joined_00008-audio.mp4",
             "subfolder": "longtalk\\video",
             "type": "output",
             "format": "video/h264-mp4",
             "frame_rate": 24,
-            "workflow": "genaud_joined_00001.png",
-            "fullpath": "D:\\GAN\\Comfy\\ComfyUI\\output\\longtalk\\video\\genaud_joined_00001-audio.mp4",
+            "workflow": "joined_00008.png",
+            "fullpath": "D:\\GAN\\Comfy\\ComfyUI\\output\\longtalk\\video\\joined_00008-audio.mp4",
             "metadata": {
               "kind": "video",
-              "width": 416,
-              "height": 256,
-              "duration": 125.58333333333333,
+              "width": 960,
+              "height": 544,
+              "duration": 312.5833333333333,
               "fps": 24,
-              "frame_count": 3014
+              "frame_count": 7502
             },
-            "id": "cbf14ed0-5753-44e4-80c3-ee73e9918acb"
+            "id": "1f7a4ec8-0373-4f89-a4bd-e1102ea574f8"
           }
         }
       }
@@ -7933,8 +7933,8 @@
       "id": 695,
       "type": "MARFileLister",
       "pos": [
-        -938.976508394826,
-        4063.9089196166437
+        -940.1553453362346,
+        4037.156255381702
       ],
       "size": [
         270,
@@ -9846,6 +9846,62 @@
       "AUDIO"
     ],
     [
+      686,
+      374,
+      0,
+      375,
+      1,
+      "INT"
+    ],
+    [
+      757,
+      434,
+      0,
+      205,
+      4,
+      "STRING"
+    ],
+    [
+      872,
+      420,
+      0,
+      115,
+      0,
+      "FLOAT"
+    ],
+    [
+      1048,
+      587,
+      0,
+      515,
+      2,
+      "FLOAT"
+    ],
+    [
+      968,
+      533,
+      0,
+      532,
+      1,
+      "INT"
+    ],
+    [
+      969,
+      534,
+      0,
+      532,
+      2,
+      "INT"
+    ],
+    [
+      1273,
+      705,
+      0,
+      680,
+      4,
+      "STRING"
+    ],
+    [
       1035,
       519,
       0,
@@ -10003,22 +10059,6 @@
       0,
       710,
       0,
-      "STRING"
-    ],
-    [
-      686,
-      374,
-      0,
-      375,
-      1,
-      "INT"
-    ],
-    [
-      757,
-      434,
-      0,
-      205,
-      4,
       "STRING"
     ],
     [
@@ -10220,46 +10260,6 @@
       200,
       24,
       "INT"
-    ],
-    [
-      872,
-      420,
-      0,
-      115,
-      0,
-      "FLOAT"
-    ],
-    [
-      1048,
-      587,
-      0,
-      515,
-      2,
-      "FLOAT"
-    ],
-    [
-      968,
-      533,
-      0,
-      532,
-      1,
-      "INT"
-    ],
-    [
-      969,
-      534,
-      0,
-      532,
-      2,
-      "INT"
-    ],
-    [
-      1273,
-      705,
-      0,
-      680,
-      4,
-      "STRING"
     ],
     [
       1286,
@@ -10515,10 +10515,10 @@
     "links_added_by_ue": [],
     "k2cf_state_id": "k2cf_1785789724406_cozxl5iajrh",
     "ds": {
-      "scale": 0.7400249944259275,
+      "scale": 0.8140274938685278,
       "offset": [
-        1858.4695079092003,
-        -2454.601305640069
+        1721.6642145008668,
+        -2503.638574739187
       ]
     }
   },
