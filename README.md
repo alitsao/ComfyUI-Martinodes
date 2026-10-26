@@ -147,6 +147,8 @@ The requested overlap duration is snapped to latent token counts using the same 
   - `audio_overlap_resolve`: How to handle the audio overlap ("crossfade", "previous", "next").
 - **Outputs**: `av_latent`
 
+The list concatenator adjusts audio overlap to keep cumulative audio tokens aligned with the accumulated video-frame duration, to compensate for drift caused by model's latent alignment difference between audio/video.
+
 ### Extend video+audio latent (LatentAVMaskedExtender)
 Extends a combined video+audio latent by overlapping a selected end of a loaded latent with the target latent. `extend_tail` and `extend_head` place the loaded overlap before the target remainder; `prepend_head` and `prepend_tail` place the target remainder before the loaded overlap.
 
