@@ -22,7 +22,7 @@ class BatchRandomPicker:
     CATEGORY = CATEGORY
     DESCRIPTION = "Selects a random batch or list item deterministically using the seed from a NOISE input and optional comma-separated weights."
 
-    def run(self, noise, any_batch, weights):
+    def run(self, noise, any_batch, weights=""):
         noise = noise[0] if isinstance(noise, list) else noise
         weights = weights[0] if isinstance(weights, list) else weights
         any_batch = unwrap_singleton_batch_input(any_batch)
@@ -36,6 +36,8 @@ class BatchRandomPicker:
             except ValueError as error:
                 raise ValueError("Weights must be comma-separated numbers.") from error
 
+            print (item_weights)
+            
             if len(item_weights) != batch_size:
                 raise ValueError(f"Expected {batch_size} weights, got {len(item_weights)}.")
             if any(not math.isfinite(weight) or weight < 0 for weight in item_weights):

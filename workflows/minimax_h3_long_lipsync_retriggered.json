@@ -578,12 +578,12 @@
       "id": 272,
       "type": "LoraLoaderModelOnly",
       "pos": [
-        -856.1723982146448,
-        5089.0168452876915
+        -923.435447224217,
+        5095.257746742186
       ],
       "size": [
-        260.1100173420923,
-        82
+        337.77456877582404,
+        88.9343349494402
       ],
       "flags": {},
       "order": 78,
@@ -1184,8 +1184,8 @@
       "id": 341,
       "type": "ModelAttentionBackend",
       "pos": [
-        -562.4087517476315,
-        5101.098691465165
+        -545.7663478689742,
+        5102.485558455052
       ],
       "size": [
         270,
@@ -1970,7 +1970,7 @@
       ],
       "size": [
         680.5544624275494,
-        730.4262677212128
+        334
       ],
       "flags": {},
       "order": 110,
@@ -2633,7 +2633,7 @@
       ],
       "size": [
         452.2406769985008,
-        378.24460247281627
+        393.9942627683082
       ],
       "flags": {},
       "order": 98,
@@ -3350,7 +3350,7 @@
         0,
         false,
         0.0001,
-        true,
+        false,
         false
       ],
       "widgets_values_named": {
@@ -3361,7 +3361,7 @@
         "audio_mask_fade_seconds": 0,
         "trim_freeze_tail": false,
         "freeze_threshold": 0.0001,
-        "keep_target_audio": true,
+        "keep_target_audio": false,
         "keep_target_video": false
       },
       "color": "#232",
@@ -4339,7 +4339,7 @@
       ],
       "flags": {},
       "order": 146,
-      "mode": 0,
+      "mode": 4,
       "inputs": [
         {
           "name": "model",
@@ -5405,11 +5405,11 @@
         }
       },
       "widgets_values": [
-        "1min_book (1).mp3",
+        "2min_book.mp3",
         ""
       ],
       "widgets_values_named": {
-        "audio": "1min_book (1).mp3",
+        "audio": "2min_book.mp3",
         "upload": ""
       },
       "color": "#322",
@@ -6480,11 +6480,11 @@
         }
       },
       "widgets_values": [
-        377785546310211,
+        499097035155919,
         "randomize"
       ],
       "widgets_values_named": {
-        "noise_seed": 377785546310211,
+        "noise_seed": 499097035155919,
         "control_after_generate": "randomize"
       }
     },
@@ -7150,7 +7150,7 @@
       ],
       "size": [
         896.1405359607543,
-        855.2392576614893
+        887.1634067450796
       ],
       "flags": {},
       "order": 161,
@@ -7220,22 +7220,22 @@
           "hidden": false,
           "paused": false,
           "params": {
-            "filename": "joined_00001-audio.mp4",
+            "filename": "genaud_joined_00001-audio.mp4",
             "subfolder": "longtalk\\video",
             "type": "output",
             "format": "video/h264-mp4",
             "frame_rate": 24,
-            "workflow": "joined_00001.png",
-            "fullpath": "D:\\GAN\\Comfy\\ComfyUI\\output\\longtalk\\video\\joined_00001-audio.mp4",
+            "workflow": "genaud_joined_00001.png",
+            "fullpath": "D:\\GAN\\Comfy\\ComfyUI\\output\\longtalk\\video\\genaud_joined_00001-audio.mp4",
             "metadata": {
               "kind": "video",
-              "width": 608,
-              "height": 352,
-              "duration": 61.125,
+              "width": 416,
+              "height": 256,
+              "duration": 125.58333333333333,
               "fps": 24,
-              "frame_count": 1467
+              "frame_count": 3014
             },
-            "id": "eace60aa-c2e5-4d98-b6b8-e1ba10afb1c3"
+            "id": "cbf14ed0-5753-44e4-80c3-ee73e9918acb"
           }
         }
       },
@@ -7254,22 +7254,22 @@
           "hidden": false,
           "paused": false,
           "params": {
-            "filename": "joined_00001-audio.mp4",
+            "filename": "genaud_joined_00001-audio.mp4",
             "subfolder": "longtalk\\video",
             "type": "output",
             "format": "video/h264-mp4",
             "frame_rate": 24,
-            "workflow": "joined_00001.png",
-            "fullpath": "D:\\GAN\\Comfy\\ComfyUI\\output\\longtalk\\video\\joined_00001-audio.mp4",
+            "workflow": "genaud_joined_00001.png",
+            "fullpath": "D:\\GAN\\Comfy\\ComfyUI\\output\\longtalk\\video\\genaud_joined_00001-audio.mp4",
             "metadata": {
               "kind": "video",
-              "width": 608,
-              "height": 352,
-              "duration": 61.125,
+              "width": 416,
+              "height": 256,
+              "duration": 125.58333333333333,
               "fps": 24,
-              "frame_count": 1467
+              "frame_count": 3014
             },
-            "id": "eace60aa-c2e5-4d98-b6b8-e1ba10afb1c3"
+            "id": "cbf14ed0-5753-44e4-80c3-ee73e9918acb"
           }
         }
       }
@@ -8508,10 +8508,10 @@
         }
       },
       "widgets_values": [
-        "{a}/video/joined"
+        "{a}/video/genaud_joined"
       ],
       "widgets_values_named": {
-        "f_string": "{a}/video/joined"
+        "f_string": "{a}/video/genaud_joined"
       }
     },
     {
@@ -10353,8 +10353,8 @@
       "bounding": [
         -1508.0593422679833,
         5008.855764244846,
-        2336.2610880101765,
-        686.6634133468169
+        2353.0185314660157,
+        949.9946676528589
       ],
       "color": "#88A",
       "flags": {}
@@ -10377,8 +10377,8 @@
       "bounding": [
         1026.697536213565,
         5167.748502810713,
-        1795.1932429172996,
-        568.8658104417646
+        1795.1932429172998,
+        595.1989358723686
       ],
       "color": "#8AA",
       "flags": {}
@@ -10515,10 +10515,10 @@
     "links_added_by_ue": [],
     "k2cf_state_id": "k2cf_1785789724406_cozxl5iajrh",
     "ds": {
-      "scale": 0.9849732675808955,
+      "scale": 0.2593742460100376,
       "offset": [
-        1680.671544202913,
-        -3292.226088854622
+        2139.2468051278242,
+        -3879.1253877792733
       ]
     }
   },

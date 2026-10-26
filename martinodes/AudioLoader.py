@@ -24,7 +24,7 @@ class AudioLoader:
 
 
     @staticmethod
-    def resolve_folder(input_path):
+    def resolve_folder(input_path=""):
         input_path = input_path.strip()
         if os.path.isabs(input_path):
             return input_path

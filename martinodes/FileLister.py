@@ -25,7 +25,7 @@ class FileLister:
 
 
     @staticmethod
-    def resolve_folder(input_path):
+    def resolve_folder(input_path=""):
         input_path = input_path.strip()
         if os.path.isabs(input_path):
             candidates = [input_path]
@@ -42,8 +42,12 @@ class FileLister:
 
         raise FileNotFoundError(f"FileLister: Folder not found: '{input_path}'")
 
+
     @classmethod
-    def IS_CHANGED(cls, input_path, refresh_trigger=0):
+    def IS_CHANGED(cls, input_path="", refresh_trigger=0):
+        if input_path is None:
+            return float("NaN") # work around the cache passing None and throwing WARNINGs here.
+
         try:
             folder = cls.resolve_folder(input_path)
         except FileNotFoundError:
@@ -66,7 +70,7 @@ class FileLister:
         )
 
 
-    def run(self, input_path, refresh_trigger=0):
+    def run(self, input_path="", refresh_trigger=0):
         folder = self.resolve_folder(input_path)
         filepaths = self.list_files(folder)
         return (filepaths, len(filepaths))
